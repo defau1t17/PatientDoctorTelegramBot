@@ -15,5 +15,6 @@
 - Docker
 
 
-Designed:
-![ designed image ](PatientDoctorTelegramBot.pdf)
+Designed variant:
+
+<img alt="designed image" src="PatientDoctorTelegramBot_v1.jpg" height="100%"/>
