@@ -14,3 +14,6 @@
 - JUnit
 - Docker
 
+
+Designed:
+![ designed image ](PatientDoctorTelegramBot.pdf)
