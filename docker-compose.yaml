@@ -1,20 +1,25 @@
 services:
   postgres:
-    image: 'postgres:latest'
+    image: postgres:latest
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - 'POSTGRES_DB=telegramusers'
+      - 'POSTGRES_PASSWORD=telegrambot'
+      - 'POSTGRES_USER=telegrambot'
     ports:
-      - '5432'
+      - 5432:5432
+    restart: always
+
   rabbitmq:
-    image: 'rabbitmq:latest'
+    image: rabbitmq:3-management
     environment:
-      - 'RABBITMQ_DEFAULT_PASS=secret'
-      - 'RABBITMQ_DEFAULT_USER=myuser'
+      - 'RABBITMQ_DEFAULT_PASS=guest'
+      - 'RABBITMQ_DEFAULT_USER=guest'
     ports:
-      - '5672'
+      - 5672:5672
+      - 15672:15672
+    restart: always
+
   redis:
-    image: 'redis:latest'
+    image: redis:latest
     ports:
-      - '6379'
+      - 6379:6379
