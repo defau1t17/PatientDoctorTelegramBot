@@ -56,7 +56,6 @@ databaseChangeLog:
               - column:
                   name: token_id
                   type: int
-
   - changeSet:
       id: 3
       author: default
@@ -94,4 +93,3 @@ databaseChangeLog:
               - column:
                   name: token_id
                   type: int
-
