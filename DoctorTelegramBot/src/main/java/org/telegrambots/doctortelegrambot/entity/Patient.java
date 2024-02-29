@@ -1,9 +1,7 @@
-package org.telegrambots.patientBot.entity;
+package org.telegrambots.doctortelegrambot.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.telegrambots.global_entity.PermissionToken;
-import org.telegrambots.global_entity.User;
 
 
 @Entity

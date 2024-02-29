@@ -1,4 +1,4 @@
-package org.telegrambots.global_entity;
+package org.telegrambots.doctortelegrambot.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

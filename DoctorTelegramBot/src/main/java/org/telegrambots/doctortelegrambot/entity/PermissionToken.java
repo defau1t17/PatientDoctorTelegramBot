@@ -1,8 +1,8 @@
-package org.telegrambots.global_entity;
+package org.telegrambots.doctortelegrambot.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.telegrambots.global_service.TokenRepository;
+import org.telegrambots.doctortelegrambot.repository.TokenRepository;
 
 import java.util.UUID;
 

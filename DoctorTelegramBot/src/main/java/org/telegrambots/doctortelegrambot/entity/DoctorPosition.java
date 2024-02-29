@@ -1,4 +1,4 @@
-package org.telegrambots.doctorBot.entity;
+package org.telegrambots.doctortelegrambot.entity;
 
 public enum DoctorPosition {
     CHIEF_PHYSICIAN("Chief Physician"),
@@ -23,5 +23,4 @@ public enum DoctorPosition {
     public String getPosition() {
         return position;
     }
-
 }
