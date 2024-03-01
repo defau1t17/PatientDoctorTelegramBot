@@ -6,11 +6,14 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Arrays;
+
 @Component
 @RequiredArgsConstructor
 public class BotController extends TelegramLongPollingBot {
 
     private final BotConfiguration botConfiguration;
+
     @Override
     public String getBotToken() {
         return botConfiguration.getToken();
@@ -23,7 +26,7 @@ public class BotController extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        System.out.println(update.getMessage().getText());
+
     }
 
 

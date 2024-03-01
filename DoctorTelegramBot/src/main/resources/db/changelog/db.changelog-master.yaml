@@ -16,6 +16,9 @@ databaseChangeLog:
               - column:
                   name: token
                   type: UUID
+              - column:
+                  name: chat_id
+                  type: int
   - changeSet:
       id: 2
       author: default
@@ -89,6 +92,9 @@ databaseChangeLog:
                   type: int
               - column:
                   name: doctor_shift
+                  type: text
+              - column:
+                  name: shift_status
                   type: text
               - column:
                   name: token_id

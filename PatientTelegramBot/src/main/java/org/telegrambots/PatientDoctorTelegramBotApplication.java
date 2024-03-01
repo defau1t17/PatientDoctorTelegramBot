@@ -10,7 +10,7 @@ import org.telegrambots.patientBot.PatientBotService;
 @SpringBootApplication
 public class PatientDoctorTelegramBotApplication {
 
-    public static void main(String[] args) throws TelegramApiException {
+    public static void main(String[] args)  {
         SpringApplication.run(PatientDoctorTelegramBotApplication.class, args);
     }
 

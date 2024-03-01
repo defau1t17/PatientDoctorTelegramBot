@@ -19,8 +19,8 @@ public class Patient extends User {
     private String description;
 
 
-    public Patient(int chatID, PermissionToken personalToken, int id, String name, String secondName, String disease, PatientState patientState, int chamberNumber, String description) {
-        super(chatID, personalToken, name, secondName);
+    public Patient(Permission personalToken, int id, String name, String secondName, String disease, PatientState patientState, int chamberNumber, String description) {
+        super(personalToken, name, secondName);
         this.id = id;
         this.disease = disease;
         this.patientState = patientState;

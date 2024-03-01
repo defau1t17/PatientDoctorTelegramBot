@@ -3,6 +3,7 @@ package org.telegrambots.doctortelegrambot.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -18,19 +19,30 @@ public class Doctor extends User {
     private int workroom;
     @Enumerated(EnumType.STRING)
     private DoctorShift doctorShift;
-    @OneToMany
+    @Enumerated(EnumType.STRING)
+    private ShiftStatus shiftStatus;
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Patient> patients;
 
-    public Doctor(int chatID, PermissionToken personalToken, int id, String name, String secondName, DoctorPosition doctorPosition, int workroom, DoctorShift doctorShift, List<Patient> patients) {
-        super(chatID, personalToken, name, secondName);
+    public Doctor(Permission personalToken, int id, String name, String secondName, DoctorPosition doctorPosition, int workroom, DoctorShift doctorShift) {
+        super(personalToken, name, secondName);
         this.id = id;
         this.doctorPosition = doctorPosition;
         this.workroom = workroom;
         this.doctorShift = doctorShift;
-        this.patients = patients;
+        this.patients = new ArrayList<>();
+        this.shiftStatus = ShiftStatus.CLOSED;
     }
 
     public Doctor() {
         super();
+    }
+
+    public void addPatient(Patient patient) {
+        this.patients.add(patient);
+    }
+
+    public void removePatient(Patient patient) {
+        this.patients.remove(patient);
     }
 }
