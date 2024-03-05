@@ -34,11 +34,6 @@ databaseChangeLog:
                     primaryKey: true
                     unique: true
               - column:
-                  name: chat_id
-                  type: int
-                  constraints:
-                    unique: true
-              - column:
                   name: name
                   type: text
               - column:
@@ -72,11 +67,6 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     primaryKey: true
-                    unique: true
-              - column:
-                  name: chat_id
-                  type: int
-                  constraints:
                     unique: true
               - column:
                   name: name
