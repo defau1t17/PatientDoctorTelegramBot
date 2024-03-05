@@ -3,7 +3,7 @@ package org.telegrambots.doctortelegrambot.contollers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.telegrambots.doctortelegrambot.entities.DoctorShift;
+import org.telegrambots.doctortelegrambot.entities.Doctor;
 import org.telegrambots.doctortelegrambot.services.DoctorService;
 
 @RestController
@@ -19,9 +19,11 @@ public class DoctorRestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> updateShift(@RequestParam String doctorID, @RequestParam String shiftCommand) {
-        return doctorService.doctorShiftManipulation(Integer.parseInt(doctorID), shiftCommand) ?
-                ResponseEntity.ok().build() :
+    public ResponseEntity<?> updateDoctorShift(@RequestParam String chatID) {
+        System.out.printf("incoming chatid %s%n", chatID);
+        Doctor updatedDoctor = doctorService.doctorShiftManipulation(Integer.parseInt(chatID));
+        return updatedDoctor != null ?
+                ResponseEntity.ok(updatedDoctor) :
                 ResponseEntity.notFound().build();
     }
 

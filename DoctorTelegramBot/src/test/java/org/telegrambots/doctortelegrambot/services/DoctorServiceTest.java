@@ -26,6 +26,11 @@ public class DoctorServiceTest {
     @Autowired
     private PermissionRepository permissionRepository;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    private final int CHAT_ID = 111111;
+
     @BeforeEach
     void preload() {
         doctor = new Doctor(Permission.tokenFabric(permissionRepository), 0, "test", "test", DoctorPosition.CARDIOLOGIST, 2133, DoctorShift.DAILY_SHIFT);
@@ -52,22 +57,32 @@ public class DoctorServiceTest {
     }
 
     @Test
+    void findDoctorByChatID() {
+        authenticationService.authenticate(CHAT_ID, doctor.getPersonalToken().getPermissionToken());
+        assertNotNull(doctorService.findDoctorByChatID(CHAT_ID).get());
+    }
+
+    @Test
     void openDoctorShiftTest() {
-        assertTrue(doctorService.doctorShiftManipulation(doctor.getId(), "OPEN"));
-        System.out.println(doctorService.findByID(doctor.getId()));
+        authenticationService.authenticate(CHAT_ID, doctor.getPersonalToken().getPermissionToken());
+        assertEquals(doctorService.doctorShiftManipulation(CHAT_ID).getShiftStatus(), ShiftStatus.OPENED);
     }
 
     @Test
     void closeDoctorShiftTest() {
-        assertTrue(doctorService.doctorShiftManipulation(doctor.getId(), "CLOSE"));
-        System.out.println(doctor);
+        authenticationService.authenticate(CHAT_ID, doctor.getPersonalToken().getPermissionToken());
+        doctorService.doctorShiftManipulation(CHAT_ID);
+        assertEquals(doctorService.doctorShiftManipulation(CHAT_ID).getShiftStatus(), ShiftStatus.CLOSED);
+
     }
 
 
     @AfterEach
     void clear() {
-       patientService.delete(patient);
-       doctorService.delete(doctor);
+        patientService.delete(patient);
+        doctorService.delete(doctor);
+        permissionRepository.delete(patient.getPersonalToken());
+        permissionRepository.delete(doctor.getPersonalToken());
     }
 
 }

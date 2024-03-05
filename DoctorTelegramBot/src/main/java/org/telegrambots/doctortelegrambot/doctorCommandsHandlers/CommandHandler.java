@@ -14,8 +14,11 @@ public class CommandHandler {
 
     public CommandHandler(Map<String, Command> commands,
                           AuthenticationCommandHandler authenticationCommandHandler,
-                          PatientsCommandHandler patientsCommandHandler) {
-        this.commands = Map.of("/authenticate", authenticationCommandHandler, "/patients", patientsCommandHandler, "/patient_id", patientsCommandHandler);
+                          PatientsCommandHandler patientsCommandHandler, ShiftCommandHandler shiftCommandHandler) {
+        this.commands = Map.of("/authenticate", authenticationCommandHandler,
+                "/patients", patientsCommandHandler,
+                "/patient_id", patientsCommandHandler,
+                "/shift", shiftCommandHandler);
     }
 
     public SendMessage handleCommands(Update update) {

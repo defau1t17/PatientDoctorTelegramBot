@@ -8,6 +8,7 @@ import org.telegrambots.doctortelegrambot.entities.ShiftStatus;
 import org.telegrambots.doctortelegrambot.repositories.DoctorRepository;
 import org.telegrambots.doctortelegrambot.repositories.EntityDAO;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,6 +50,10 @@ public class DoctorService extends EntityDAO<Doctor, Integer> {
         repository.deleteById(id);
     }
 
+    public Optional<Doctor> findDoctorByChatID(int chatID) {
+        return repository.findDoctorByChatID(chatID);
+    }
+
     public boolean addNewPatientIntoDoctorResponsibleList(int patientID, int doctorID) {
         if (validatePatientBefore(patientID, doctorID)) {
             Doctor doctor = findByID(doctorID).get();
@@ -73,22 +78,22 @@ public class DoctorService extends EntityDAO<Doctor, Integer> {
         return optionalPatient.isPresent() && optionalDoctor.isPresent();
     }
 
-    public boolean doctorShiftManipulation(int doctorID, String status) {
-        if (findByID(doctorID).isPresent()) {
-            Doctor doctor = findByID(doctorID).get();
-            switch (status) {
-                case "OPEN":
+    public Doctor doctorShiftManipulation(int doctorID) {
+        if (findDoctorByChatID(doctorID).isPresent()) {
+            Doctor doctor = findDoctorByChatID(doctorID).get();
+            switch (doctor.getShiftStatus()) {
+                case CLOSED:
                     doctor.setShiftStatus(ShiftStatus.OPENED);
                     break;
-                case "CLOSE":
+                case OPENED:
                     doctor.setShiftStatus(ShiftStatus.CLOSED);
                     break;
                 default:
                     //some logs
             }
-            return update(doctor) != null;
+            return update(doctor);
         }
-        return false;
+        return null;
     }
 
 
