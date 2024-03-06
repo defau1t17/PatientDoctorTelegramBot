@@ -53,7 +53,7 @@ public class DoctorServiceTest {
     @Test
     void addAndRemovePatientFromDoctorResponsibleListTest() {
         assertTrue(doctorService.addNewPatientIntoDoctorResponsibleList(patient.getId(), doctor.getId()));
-        assertTrue(doctorService.removePatientIntoDoctorResponsibleList(patient.getId(), doctor.getId()));
+        assertTrue(doctorService.removePatientFromDoctorResponsibleList(patient.getId(), doctor.getId()));
     }
 
     @Test

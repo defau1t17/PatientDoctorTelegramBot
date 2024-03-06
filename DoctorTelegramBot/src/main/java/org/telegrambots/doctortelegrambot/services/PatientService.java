@@ -47,6 +47,10 @@ public class PatientService extends EntityDAO<Patient, Integer> {
         repository.deleteById(id);
     }
 
+    public Optional<Patient> findPatientByChatID(int chatID) {
+        return repository.findPatientByChatID(chatID);
+    }
+
     public boolean validatePatientBeforeSave(Patient patient) {
         if (patient.getName() == null || patient.getName().isEmpty()) return false;
         if (patient.getSecondName() == null || patient.getSecondName().isEmpty()) return false;

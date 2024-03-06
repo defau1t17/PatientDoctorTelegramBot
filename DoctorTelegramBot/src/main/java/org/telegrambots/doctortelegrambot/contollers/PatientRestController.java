@@ -19,7 +19,6 @@ public class PatientRestController {
 
     private final PermissionRepository permissionRepository;
 
-    @SuppressWarnings(value = "org.springframework.http.HttpStatus.NOT_FOUND")
     @GetMapping("/{id}")
     public ResponseEntity<?> getPatientByID(@PathVariable String id) {
         return patientService.findByID(Integer.parseInt(id)).isPresent() ?

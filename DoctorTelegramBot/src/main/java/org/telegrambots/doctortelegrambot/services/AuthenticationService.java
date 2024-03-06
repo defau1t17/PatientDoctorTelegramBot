@@ -33,7 +33,7 @@ public class AuthenticationService {
 
     public boolean validateBeforeAuthentication(UUID token) {
         Permission permissionByToken = permissionRepository.findByPermissionToken(token);
-        return permissionByToken == null || permissionByToken.getChatID() != -1 ? false : true;
+        return permissionByToken != null && permissionByToken.getChatID() == -1;
     }
 
     public boolean validateBeforeUnauthentication(int chatID) {

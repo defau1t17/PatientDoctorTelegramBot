@@ -8,7 +8,6 @@ import org.telegrambots.doctortelegrambot.entities.ShiftStatus;
 import org.telegrambots.doctortelegrambot.repositories.DoctorRepository;
 import org.telegrambots.doctortelegrambot.repositories.EntityDAO;
 
-import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,7 +62,7 @@ public class DoctorService extends EntityDAO<Doctor, Integer> {
         return false;
     }
 
-    public boolean removePatientIntoDoctorResponsibleList(int patientID, int doctorID) {
+    public boolean removePatientFromDoctorResponsibleList(int patientID, int doctorID) {
         if (validatePatientBefore(patientID, doctorID)) {
             Doctor doctor = findByID(doctorID).get();
             doctor.removePatient(patientService.findByID(patientID).get());
