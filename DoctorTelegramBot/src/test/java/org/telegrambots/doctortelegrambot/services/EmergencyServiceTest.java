@@ -34,7 +34,7 @@ class EmergencyServiceTest {
     void init() {
         rabbitTemplate = Mockito.mock(RabbitTemplate.class);
         emergencyService = new EmergencyService(rabbitTemplate);
-        patient = new Patient(Permission.tokenFabric(permissionRepository), 0, "patient", "patient", "Huge brain", PatientState.Stable, 1333, "smart");
+        patient = new Patient(Permission.tokenFabric(permissionRepository), 0, "patient", "patient", "Huge brain", PatientState.STABLE, 1333, "smart");
         patient.getPersonalToken().setChatID(CHAT_ID);
     }
 
@@ -48,7 +48,7 @@ class EmergencyServiceTest {
 
     @Test
     void emergencyCallerForDoctorAndNurseTest() {
-        patient.setPatientState(PatientState.Hard);
+        patient.setPatientState(PatientState.HARD);
         assertThatCode(() -> emergencyService.emergencyCallerByPatientState(patient))
                 .doesNotThrowAnyException();
         Mockito.verify(this.rabbitTemplate)
@@ -58,7 +58,7 @@ class EmergencyServiceTest {
     }
     @Test
     void emergencyCallerForDoctorNurseAndParamedicTest() {
-        patient.setPatientState(PatientState.Critical);
+        patient.setPatientState(PatientState.CRITICAL);
         assertThatCode(() -> emergencyService.emergencyCallerByPatientState(patient))
                 .doesNotThrowAnyException();
         Mockito.verify(this.rabbitTemplate)

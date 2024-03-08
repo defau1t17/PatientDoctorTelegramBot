@@ -44,7 +44,7 @@ public class EmergencyRestControllerTest {
 
     @BeforeEach
     void create() {
-        patient = new Patient(Permission.tokenFabric(permissionRepository), 0, "patient", "patient", "Huge brain", PatientState.Stable, 1333, "smart");
+        patient = new Patient(Permission.tokenFabric(permissionRepository), 0, "patient", "patient", "Huge brain", PatientState.STABLE, 1333, "smart");
         patientService.create(patient);
         authenticationService.authenticate(CHAT_ID, patient.getPersonalToken().getPermissionToken());
         rabbitTemplate = Mockito.mock(RabbitTemplate.class);

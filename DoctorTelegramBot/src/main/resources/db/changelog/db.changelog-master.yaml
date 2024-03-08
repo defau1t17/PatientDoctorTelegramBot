@@ -89,3 +89,22 @@ databaseChangeLog:
               - column:
                   name: token_id
                   type: int
+  - changeSet:
+      id: 4
+      author: default
+      changes:
+        -  createTable:
+             tableName: states
+             columns:
+               - column:
+                   name: id
+                   type: int
+                   autoIncrement: true
+                   constraints:
+                     unique: true
+               - column:
+                  name: chat_id
+                  type: int
+               - column:
+                   name: chat_state
+                   type: text

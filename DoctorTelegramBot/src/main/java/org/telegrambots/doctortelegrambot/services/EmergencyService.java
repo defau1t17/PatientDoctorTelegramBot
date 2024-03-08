@@ -6,8 +6,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import org.telegrambots.doctortelegrambot.entities.Patient;
 
-import java.util.Arrays;
-
 import static java.util.Arrays.*;
 
 @Service
@@ -20,13 +18,13 @@ public class EmergencyService {
     public void emergencyCallerByPatientState(Patient patient) {
         switch (patient.getPatientState()) {
 
-            case Stable -> {
+            case STABLE -> {
                 callForObject(patient.getPersonalToken().getChatID(), "nurse");
             }
-            case Hard -> {
+            case HARD -> {
                 callForObject(patient.getPersonalToken().getChatID(), "nurse", "doctor");
             }
-            case Critical -> {
+            case CRITICAL -> {
                 callForObject(patient.getPersonalToken().getChatID(), "nurse", "doctor", "paramedic");
             }
             default -> {

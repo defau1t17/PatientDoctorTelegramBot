@@ -13,6 +13,7 @@ import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
 import org.telegrambots.doctortelegrambot.exceptions.RestTemplateExceptionHandler;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class AuthenticationCommandHandler implements Command {
     @Override
     public SendMessage sendResponse(Update update) {
         String extractedToken = extractTokenFromMessage(update.getMessage().getText());
-        if (extractedToken != null) {
+        if (extractedToken != null && validateToken(extractedToken)) {
             if (authenticateClient(Math.toIntExact(update.getMessage().getChatId()), extractedToken)) {
                 sendMessage.setText(TelegramBotResponses.AUTH_PASSED.getDescription());
             } else {
@@ -49,6 +50,15 @@ public class AuthenticationCommandHandler implements Command {
         return messageArray.length == 2 ?
                 messageArray[1] :
                 null;
+    }
+
+    private boolean validateToken(String token) {
+        try {
+            UUID.fromString(token);
+        } catch (IllegalArgumentException exception) {
+            return false;
+        }
+        return true;
     }
 
 }
