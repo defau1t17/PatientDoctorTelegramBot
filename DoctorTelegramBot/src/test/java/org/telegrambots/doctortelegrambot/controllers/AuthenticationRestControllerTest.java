@@ -26,7 +26,6 @@ public class AuthenticationRestControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-
     private PermissionRepository permissionRepository;
 
     @Mock
@@ -34,6 +33,8 @@ public class AuthenticationRestControllerTest {
 
     @Autowired
     private DoctorService doctorService;
+
+    private final int CHAT_ID = 8883131;
 
     @BeforeEach
     void preload() {
@@ -44,14 +45,14 @@ public class AuthenticationRestControllerTest {
     @Test
     void testGetAuthenticationStatusUnauthorized() throws Exception {
         mockMvc.perform(get("/api/v1/authenticate")
-                        .param("chatID", "23131"))
+                        .param("chatID", String.valueOf(-1113)))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     void clientAuthenticationByTokenTest() throws Exception {
         mockMvc.perform(post("/api/v1/authenticate")
-                .param("chatID", "31231231")
+                .param("chatID", String.valueOf(CHAT_ID))
                 .param("token", doctor.getPersonalToken().getPermissionToken().toString())
         ).andExpect(status().isOk());
     }
@@ -59,7 +60,7 @@ public class AuthenticationRestControllerTest {
     @Test
     void clientAuthenticationByTokenTestFailure() throws Exception {
         mockMvc.perform(post("/api/v1/authenticate")
-                        .param("chatID", "312313231543543")
+                        .param("chatID", String.valueOf(CHAT_ID))
                         .param("token", UUID.randomUUID().toString()))
                 .andExpect(status().isBadRequest());
     }
@@ -68,25 +69,24 @@ public class AuthenticationRestControllerTest {
     void testGetAuthenticationStatusAuthorized() throws Exception {
         clientAuthenticationByTokenTest();
         mockMvc.perform(get("/api/v1/authenticate")
-                        .param("chatID", "31231231"))
+                        .param("chatID", String.valueOf(CHAT_ID)))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void deleteDisauthenticationSuccessTest() throws Exception {
+    void deleteUnauthenticationSuccessTest() throws Exception {
         clientAuthenticationByTokenTest();
         mockMvc.perform(delete("/api/v1/authenticate")
-                        .param("chatID", "31231231"))
+                        .param("chatID", String.valueOf(CHAT_ID)))
                 .andExpect(status().isOk());
     }
     @Test
-    void deleteDisauthenticationFailureTest() throws Exception {
+    void deleteUnauthenticationFailureTest() throws Exception {
         clientAuthenticationByTokenTest();
         mockMvc.perform(delete("/api/v1/authenticate")
-                        .param("chatID", "0000000"))
+                        .param("chatID", "-133"))
                 .andExpect(status().isBadRequest());
     }
-
 
     @AfterEach
     void clear() {
