@@ -36,8 +36,8 @@ public class ShiftCommandHandler implements Command {
     }
 
     private Doctor shiftManipulation(long chatID) {
-        ResponseEntity<Doctor> shiftStatusUpdate = restTemplate.postForEntity("http://localhost:8080/api/v1/doctor?chatID={id}", new Doctor(), Doctor.class, chatID);
-        return shiftStatusUpdate.getStatusCode().equals(OK) ?
+        ResponseEntity<Doctor> shiftStatusUpdate = restTemplate.postForEntity("http://localhost:8080/api/v1/doctor/shift?chatID={id}", new Doctor(), Doctor.class, chatID);
+        return shiftStatusUpdate.getStatusCode().is2xxSuccessful() ?
                 shiftStatusUpdate.getBody() :
                 null;
     }

@@ -18,4 +18,13 @@ public abstract class User {
     @Column(name = "second_name")
     private String secondName;
 
+    @Override
+    public String toString() {
+        return "\nToken: [%s]\nName: [%s]\nSecond name: [%s]"
+                .formatted(
+                        this.personalToken.getPermissionToken(),
+                        this.name,
+                        this.secondName
+                );
+    }
 }

@@ -2,12 +2,11 @@ package org.telegrambots.doctortelegrambot.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.telegrambots.doctortelegrambot.entities.Doctor;
-import org.telegrambots.doctortelegrambot.entities.Patient;
-import org.telegrambots.doctortelegrambot.entities.ShiftStatus;
+import org.telegrambots.doctortelegrambot.entities.*;
 import org.telegrambots.doctortelegrambot.repositories.DoctorRepository;
 import org.telegrambots.doctortelegrambot.repositories.EntityDAO;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +53,7 @@ public class DoctorService extends EntityDAO<Doctor, Integer> {
     }
 
     public boolean addNewPatientIntoDoctorResponsibleList(int patientID, int doctorID) {
-        if (validatePatientBefore(patientID, doctorID)) {
+        if (validateEntitiesBeforeOperation(patientID, doctorID)) {
             Doctor doctor = findByID(doctorID).get();
             doctor.addPatient(patientService.findByID(patientID).get());
             return update(doctor) != null;
@@ -63,7 +62,7 @@ public class DoctorService extends EntityDAO<Doctor, Integer> {
     }
 
     public boolean removePatientFromDoctorResponsibleList(int patientID, int doctorID) {
-        if (validatePatientBefore(patientID, doctorID)) {
+        if (validateEntitiesBeforeOperation(patientID, doctorID)) {
             Doctor doctor = findByID(doctorID).get();
             doctor.removePatient(patientService.findByID(patientID).get());
             return update(doctor) != null;
@@ -71,7 +70,7 @@ public class DoctorService extends EntityDAO<Doctor, Integer> {
         return false;
     }
 
-    private boolean validatePatientBefore(int patientID, int doctorID) {
+    private boolean validateEntitiesBeforeOperation(int patientID, int doctorID) {
         Optional<Doctor> optionalDoctor = findByID(doctorID);
         Optional<Patient> optionalPatient = patientService.findByID(patientID);
         return optionalPatient.isPresent() && optionalDoctor.isPresent();
@@ -93,6 +92,22 @@ public class DoctorService extends EntityDAO<Doctor, Integer> {
             return update(doctor);
         }
         return null;
+    }
+
+    public boolean validateDoctorBeforeSave(Doctor doctor) {
+        if (doctor.getName() == null || doctor.getName().isEmpty()) return false;
+        if (doctor.getSecondName() == null || doctor.getSecondName().isEmpty()) return false;
+        if (doctor.getDoctorShift() == null || Arrays.stream(DoctorShift
+                        .values())
+                .noneMatch(doctorShift -> doctorShift.equals(doctor.getDoctorShift()))) return false;
+        if (doctor.getDoctorPosition() == null || Arrays.stream(DoctorPosition
+                        .values())
+                .noneMatch(doctorPosition -> doctorPosition.equals(doctor.getDoctorPosition()))) return false;
+        if (doctor.getWorkroom() < 0 || doctor.getWorkroom() > 1000) return false;
+        if (doctor.getShiftStatus() == null || Arrays.stream(ShiftStatus
+                        .values())
+                .noneMatch(shiftStatus -> shiftStatus.equals(doctor.getShiftStatus()))) return false;
+        return true;
     }
 
 

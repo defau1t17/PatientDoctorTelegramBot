@@ -32,4 +32,14 @@ public class Patient extends User {
         super();
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "\nID : [%s]\nDisease: [%s]\nState: [%s]\nChamber: [%s]\nDescription: [%s]\n"
+                .formatted(
+                        this.id,
+                        this.disease,
+                        this.patientState,
+                        this.chamberNumber,
+                        this.description);
+    }
 }

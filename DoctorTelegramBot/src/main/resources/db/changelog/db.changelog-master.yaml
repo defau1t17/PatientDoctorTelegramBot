@@ -105,6 +105,8 @@ databaseChangeLog:
                - column:
                   name: chat_id
                   type: int
+                  constraints:
+                    unique: true
                - column:
                    name: chat_state
                    type: text

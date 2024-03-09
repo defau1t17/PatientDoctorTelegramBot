@@ -24,12 +24,14 @@ public class CommandHandler {
                           AuthenticationCommandHandler authenticationCommandHandler,
                           PatientsCommandHandler patientsCommandHandler,
                           ShiftCommandHandler shiftCommandHandler,
-                          NewPatientCommandHandler newPatientCommandHandler) {
+                          NewPatientCommandHandler newPatientCommandHandler,
+                          CancelCommandHandler cancelCommandHandler) {
         this.commands = Map.of("/authenticate", authenticationCommandHandler,
                 "/patients", patientsCommandHandler,
-                "/patient_id", patientsCommandHandler,
+                "/patient", patientsCommandHandler,
                 "/shift", shiftCommandHandler,
-                "/new_patient", newPatientCommandHandler);
+                "/new_patient", newPatientCommandHandler,
+                "/cancel", cancelCommandHandler);
     }
 
     public SendMessage handleCommands(Update update) {
@@ -39,9 +41,12 @@ public class CommandHandler {
         Optional<ChatState> optionalChatStateByChat = chatStateRepository.findChatStateByChatID(Math.toIntExact(update.getMessage().getChatId()));
         var commandHandler = commands.get(command);
         if (commandHandler != null) {
+            System.out.println("command block works");
             return commandHandler.sendResponse(update);
         } else if (optionalChatStateByChat.isPresent() && !optionalChatStateByChat.get().getChatStates().equals(ChatStates.DEFAULT)) {
-            commandHandler = commands.get("/new_patient");
+            System.out.println("state block works");
+
+            commandHandler = commands.get(optionalChatStateByChat.get().getChatStates().getCommandReference());
             return commandHandler.sendResponse(update);
         } else {
             return new SendMessage(String.valueOf(chatId), "Error");

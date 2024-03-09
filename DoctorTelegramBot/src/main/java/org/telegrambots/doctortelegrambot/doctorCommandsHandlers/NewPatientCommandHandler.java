@@ -1,45 +1,53 @@
 package org.telegrambots.doctortelegrambot.doctorCommandsHandlers;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegrambots.doctortelegrambot.dto.PatientDTO;
 import org.telegrambots.doctortelegrambot.entities.ChatState;
+import org.telegrambots.doctortelegrambot.entities.ChatStates;
 import org.telegrambots.doctortelegrambot.entities.Patient;
 import org.telegrambots.doctortelegrambot.entities.PatientState;
-import org.telegrambots.doctortelegrambot.entities.Permission;
+import org.telegrambots.doctortelegrambot.exceptions.RestTemplateExceptionHandler;
 import org.telegrambots.doctortelegrambot.repositories.ChatStateRepository;
-import org.telegrambots.doctortelegrambot.repositories.PermissionRepository;
-import org.telegrambots.doctortelegrambot.services.PatientService;
 
 
 @Component
-public class NewPatientCommandHandler implements Command {
+@RequiredArgsConstructor
+public class NewPatientCommandHandler implements Command, StateUpdatable {
     private SendMessage sendMessage = new SendMessage();
 
     private Patient newPatient = new Patient();
 
-    @Autowired
-    private ChatStateRepository chatStateRepository;
+    private final ChatStateRepository chatStateRepository;
 
-    @Autowired
-    private PatientService patientService;
+    private final RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new RestTemplateExceptionHandler()).build();
 
-    @Autowired
-    private PermissionRepository permissionRepository;
     private String responseMessage = "";
+
+    private final String moveReference = "/new_patient";
 
 
     @Override
     public SendMessage sendResponse(Update update) {
-        ChatState chatState = chatStateRepository.findChatStateByChatID(Math.toIntExact(update.getMessage().getChatId())).get();
-        buildPatient(chatState, update);
+        ChatState chatState = chatStateRepository.findChatStateByChatID(Math.toIntExact(update.getMessage().getChatId())).orElse(null);
+        if (chatState == null) {
+            this.responseMessage = "Unknown error happened";
+        } else {
+            responseOnState(chatState, update);
+            StateUpdatable.updateState(chatStateRepository, chatState, moveReference);
+        }
         sendMessage.setText(responseMessage);
         sendMessage.setChatId(update.getMessage().getChatId());
         return sendMessage;
     }
 
-    private void buildPatient(ChatState chatState, Update update) {
+    @Override
+    public void responseOnState(ChatState chatState, Update update) {
         String message = update.getMessage().getText();
         switch (chatState.getChatStates()) {
             case DEFAULT -> {
@@ -59,46 +67,41 @@ public class NewPatientCommandHandler implements Command {
             }
             case WAITING_FOR_PATIENT_STATE -> {
                 this.newPatient.setPatientState(PatientState.valueOf(message.toUpperCase()));
-                this.responseMessage = "Please input the chamber number : ";
+                this.responseMessage = "Please input the chamber number in range [10-999] : ";
             }
             case WAITING_FOR_CHAMBER_NUMBER -> {
                 this.newPatient.setChamberNumber(Integer.parseInt(message));
-                this.responseMessage = "You may add some description(if not just print '-' : ";
+                this.responseMessage = "You may add some description(if not just print '-') : ";
             }
             case WAITING_FOR_DESCRIPTION -> {
                 this.newPatient.setDescription(message);
-                this.newPatient.setPersonalToken(Permission.tokenFabric(permissionRepository));
-                newPatient = patientService.create(newPatient);
-                if (patientService.validatePatientBeforeSave(newPatient)) {
-                    this.responseMessage = "New patient created : \nID :[%s]\nToken : [%s]\nName : [%s]\nSecond name : [%s]\nDisease : [%s]\nState : [%s]\nChamber : [%s]\nDescription : [%s]"
-                            .formatted(
-                                    this.newPatient.getId(),
-                                    this.newPatient.getPersonalToken().getPermissionToken(),
-                                    this.newPatient.getName(),
-                                    this.newPatient.getSecondName(),
-                                    this.newPatient.getDisease(),
-                                    this.newPatient.getPatientState(),
-                                    this.newPatient.getChamberNumber(),
-                                    this.newPatient.getDescription());
-                    clearNewPatient();
+                Patient optionalPatient = sendRequestForNewPatient(newPatient);
+                if (optionalPatient != null) {
+                    this.responseMessage = "New patient to be created : " + optionalPatient.toString();
                 } else {
                     this.responseMessage = "An error happened while validating a new patient!\n Unfortunately we can't save this patient";
                 }
+                clearNewPatient();
+            }
+            default -> {
+                chatState.setChatStates(ChatStates.DEFAULT);
+                chatState = chatStateRepository.save(chatState);
+                responseOnState(chatState, update);
             }
         }
-        updateState(chatState);
     }
 
     // create ability to modify patient data by telegram bot buttons
-
-    private void updateState(ChatState chatState) {
-        chatState.setChatStates(chatState.getChatStates().next());
-        chatStateRepository.save(chatState);
-    }
 
     private void clearNewPatient() {
         this.newPatient = null;
     }
 
-
+    private Patient sendRequestForNewPatient(Patient patient) {
+        PatientDTO patientDTO = PatientDTO.covertPatientToDTO(patient);
+        ResponseEntity<Patient> patientResponseEntity = restTemplate.postForEntity("http://localhost:8080/api/v1/patient", patientDTO, Patient.class, "");
+        return patientResponseEntity.getStatusCode().is2xxSuccessful() ?
+                patientResponseEntity.getBody() :
+                null;
+    }
 }
