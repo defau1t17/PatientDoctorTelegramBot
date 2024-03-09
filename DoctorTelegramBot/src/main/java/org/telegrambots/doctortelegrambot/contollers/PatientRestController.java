@@ -10,6 +10,8 @@ import org.telegrambots.doctortelegrambot.entities.Permission;
 import org.telegrambots.doctortelegrambot.repositories.PermissionRepository;
 import org.telegrambots.doctortelegrambot.services.PatientService;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/api/v1/patient")
 @RequiredArgsConstructor
@@ -22,13 +24,17 @@ public class PatientRestController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getPatientByID(@PathVariable String id) {
         return patientService.findByID(Integer.parseInt(id)).isPresent() ?
-                ResponseEntity.ok(patientService.findByID(Integer.parseInt(id)).get()) :
-                new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                ResponseEntity
+                        .ok(patientService.findByID(Integer.parseInt(id)).get()) :
+                ResponseEntity
+                        .notFound()
+                        .build();
     }
 
     @GetMapping
     public ResponseEntity<?> getPatients() {
-        return ResponseEntity.ok(patientService.findAll());
+        return ResponseEntity
+                .ok(patientService.findAll());
     }
 
     @PostMapping
@@ -36,9 +42,27 @@ public class PatientRestController {
         if (patientService.validatePatientBeforeSave(patientDTO.convertDTOToPatient())) {
             Patient patient = patientDTO.convertDTOToPatient();
             patient.setPersonalToken(Permission.tokenFabric(permissionRepository));
-            return ResponseEntity.status(HttpStatus.CREATED).body(patientService.create(patient));
-        }
-        return ResponseEntity.badRequest().build();
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(patientService.create(patient));
+        } else return
+                ResponseEntity
+                        .badRequest()
+                        .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deletePatientByID(@PathVariable(name = "id") String id) {
+        Optional<Patient> optionalPatient = patientService.findByID(Integer.valueOf(id));
+        if (optionalPatient.isPresent()) {
+            patientService.delete(optionalPatient.get());
+            return ResponseEntity
+                    .ok()
+                    .build();
+        } else
+            return ResponseEntity
+                    .notFound()
+                    .build();
     }
 
 

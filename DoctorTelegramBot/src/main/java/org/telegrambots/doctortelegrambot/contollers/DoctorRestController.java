@@ -53,6 +53,17 @@ public class DoctorRestController {
                         .notFound().build();
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteDoctor(@PathVariable(name = "id") String id) {
+        Optional<Doctor> optionalDoctor = doctorService.findByID(Integer.valueOf(id));
+        if (optionalDoctor.isPresent()) {
+            doctorService.delete(optionalDoctor.get());
+            return ResponseEntity.ok().build();
+        } else
+            return ResponseEntity
+                    .notFound()
+                    .build();
+    }
 
 
 }
