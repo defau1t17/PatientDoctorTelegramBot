@@ -15,12 +15,11 @@ public final class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name = "chat_id")
-    private int chatID;
+    private long chatID;
     @Column(name = "token")
     private UUID permissionToken;
 
     protected Permission() {
-        this.id = 0;
         this.chatID = -1;
         this.permissionToken = generateToken();
     }

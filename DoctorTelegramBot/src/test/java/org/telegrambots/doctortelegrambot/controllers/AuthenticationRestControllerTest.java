@@ -34,7 +34,7 @@ public class AuthenticationRestControllerTest {
     @Autowired
     private DoctorService doctorService;
 
-    private final int CHAT_ID = 8883131;
+    private final long CHAT_ID = 8883131;
 
     @BeforeEach
     void preload() {

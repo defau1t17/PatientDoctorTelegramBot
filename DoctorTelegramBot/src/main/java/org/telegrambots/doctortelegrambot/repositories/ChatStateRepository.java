@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface ChatStateRepository extends JpaRepository<ChatState, Integer> {
 
     @Query(value = "SELECT state FROM ChatState state WHERE state.chat_id = ?1")
-    Optional<ChatState> findChatStateByChatID(int chat_id);
+    Optional<ChatState> findChatStateByChatID(long chat_id);
 
 }

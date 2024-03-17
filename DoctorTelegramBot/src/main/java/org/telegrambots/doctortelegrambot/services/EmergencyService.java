@@ -27,13 +27,10 @@ public class EmergencyService {
             case CRITICAL -> {
                 callForObject(patient.getPersonalToken().getChatID(), "nurse", "doctor", "paramedic");
             }
-            default -> {
-                //logging
-            }
         }
     }
 
-    private void callForObject(int patientChatID, String... doctors) {
+    private void callForObject(long patientChatID, String... doctors) {
         stream(doctors)
                 .forEach(doctor ->
                         template.convertAndSend(doctor, patientChatID));

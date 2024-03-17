@@ -48,7 +48,7 @@ public class DoctorService extends EntityDAO<Doctor, Integer> {
         repository.deleteById(id);
     }
 
-    public Optional<Doctor> findDoctorByChatID(int chatID) {
+    public Optional<Doctor> findDoctorByChatID(long chatID) {
         return repository.findDoctorByChatID(chatID);
     }
 
@@ -76,9 +76,9 @@ public class DoctorService extends EntityDAO<Doctor, Integer> {
         return optionalPatient.isPresent() && optionalDoctor.isPresent();
     }
 
-    public Doctor doctorShiftManipulation(int doctorID) {
-        if (findDoctorByChatID(doctorID).isPresent()) {
-            Doctor doctor = findDoctorByChatID(doctorID).get();
+    public Doctor doctorShiftManipulation(long doctorChatID) {
+        if (findDoctorByChatID(doctorChatID).isPresent()) {
+            Doctor doctor = findDoctorByChatID(doctorChatID).get();
             switch (doctor.getShiftStatus()) {
                 case CLOSED:
                     doctor.setShiftStatus(ShiftStatus.OPENED);
@@ -86,8 +86,6 @@ public class DoctorService extends EntityDAO<Doctor, Integer> {
                 case OPENED:
                     doctor.setShiftStatus(ShiftStatus.CLOSED);
                     break;
-                default:
-                    //some logs
             }
             return update(doctor);
         }

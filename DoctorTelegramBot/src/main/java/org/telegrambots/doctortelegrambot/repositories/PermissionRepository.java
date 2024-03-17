@@ -9,7 +9,7 @@ import java.util.UUID;
 @Repository
 public interface PermissionRepository extends JpaRepository<Permission, Integer> {
 
-    Permission findByChatID(int chatID);
+    Permission findByChatID(long chatID);
 
     Permission findByPermissionToken(UUID token);
 }

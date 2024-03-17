@@ -19,16 +19,10 @@ import static org.mockito.ArgumentMatchers.eq;
 class EmergencyServiceTest {
     private RabbitTemplate rabbitTemplate;
     private EmergencyService emergencyService;
-
-
     @Autowired
     private PermissionRepository permissionRepository;
-
-
-    private final int CHAT_ID = 1231231;
-
+    private final long CHAT_ID = 1231231;
     private Patient patient;
-
 
     @BeforeEach
     void init() {
@@ -56,6 +50,7 @@ class EmergencyServiceTest {
         Mockito.verify(this.rabbitTemplate)
                 .convertAndSend(eq("doctor"), eq(CHAT_ID));
     }
+
     @Test
     void emergencyCallerForDoctorNurseAndParamedicTest() {
         patient.setPatientState(PatientState.CRITICAL);

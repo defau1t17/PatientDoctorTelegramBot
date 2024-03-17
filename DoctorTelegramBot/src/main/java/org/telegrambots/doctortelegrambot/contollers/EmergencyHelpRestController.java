@@ -22,8 +22,8 @@ public class EmergencyHelpRestController {
     private final EmergencyService emergencyService;
 
     @PostMapping
-    public ResponseEntity<?> requestEmergencyHelp(@RequestParam String chatID) {
-        Optional<Patient> optionalPatient = patientService.findPatientByChatID(Integer.parseInt(chatID));
+    public ResponseEntity<?> requestEmergencyHelp(@RequestParam long chatID) {
+        Optional<Patient> optionalPatient = patientService.findPatientByChatID(chatID);
         if (optionalPatient.isPresent()) {
             emergencyService.emergencyCallerByPatientState(optionalPatient.get());
             return ResponseEntity.ok().build();

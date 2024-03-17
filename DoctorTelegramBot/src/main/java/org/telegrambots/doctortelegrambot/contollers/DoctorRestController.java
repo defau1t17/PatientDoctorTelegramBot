@@ -44,8 +44,8 @@ public class DoctorRestController {
     }
 
     @PostMapping("/shift")
-    public ResponseEntity<?> updateDoctorShift(@RequestParam(name = "chatID") String chatID) {
-        Doctor updatedDoctor = doctorService.doctorShiftManipulation(Integer.parseInt(chatID));
+    public ResponseEntity<?> updateDoctorShift(@RequestParam(name = "chatID") long chatID) {
+        Doctor updatedDoctor = doctorService.doctorShiftManipulation(chatID);
         return updatedDoctor != null ?
                 ResponseEntity
                         .ok(updatedDoctor) :

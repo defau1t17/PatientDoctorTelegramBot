@@ -19,7 +19,7 @@ public class AuthenticationRestController {
     private final AuthenticationService authenticationService;
 
     @GetMapping
-    public ResponseEntity<?> getAuthenticationStatus(@RequestParam int chatID) {
+    public ResponseEntity<?> getAuthenticationStatus(@RequestParam long chatID) {
         return permissionRepository.findByChatID(chatID) == null || permissionRepository.findByChatID(chatID).getChatID() == -1 ?
                 ResponseEntity
                         .status(HttpStatus.UNAUTHORIZED)
@@ -41,7 +41,7 @@ public class AuthenticationRestController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> unauthenticate(@RequestParam int chatID) {
+    public ResponseEntity<?> unauthenticate(@RequestParam long chatID) {
         return authenticationService.unauthenticate(chatID) ?
                 ResponseEntity
                         .ok()

@@ -13,12 +13,12 @@ public class ChatState {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @JoinColumn(name = "chat_id", referencedColumnName = "chat_id", table = "tokens")
-    private int chat_id;
+    private long chat_id;
     @Enumerated(value = EnumType.STRING)
     @Column(name = "chat_state")
     private ChatStates chatStates;
 
-    public ChatState(int chat_id) {
+    public ChatState(long chat_id) {
         this.id = 0;
         this.chat_id = chat_id;
         this.chatStates = ChatStates.DEFAULT;

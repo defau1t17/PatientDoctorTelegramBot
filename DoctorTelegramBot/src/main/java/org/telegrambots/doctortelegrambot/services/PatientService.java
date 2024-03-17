@@ -1,6 +1,11 @@
 package org.telegrambots.doctortelegrambot.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.support.PageableUtils;
 import org.springframework.stereotype.Service;
 import org.telegrambots.doctortelegrambot.entities.Patient;
 import org.telegrambots.doctortelegrambot.entities.PatientState;
@@ -47,7 +52,11 @@ public class PatientService extends EntityDAO<Patient, Integer> {
         repository.deleteById(id);
     }
 
-    public Optional<Patient> findPatientByChatID(int chatID) {
+    public Page<Patient> findAllByPage(int pageNumber, int pageSize) {
+        return repository.findAll(PageRequest.of(pageNumber, pageSize));
+    }
+
+    public Optional<Patient> findPatientByChatID(long chatID) {
         return repository.findPatientByChatID(chatID);
     }
 

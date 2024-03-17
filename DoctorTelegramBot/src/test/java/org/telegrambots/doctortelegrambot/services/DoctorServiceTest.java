@@ -29,7 +29,7 @@ public class DoctorServiceTest {
     @Autowired
     private AuthenticationService authenticationService;
 
-    private final int CHAT_ID = 111111;
+    private final long CHAT_ID = 111111;
 
     @BeforeEach
     void preload() {

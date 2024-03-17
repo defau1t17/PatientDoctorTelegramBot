@@ -24,7 +24,7 @@ public class AuthenticationServiceTest {
 
     private Doctor doctor;
 
-    private final int CHAT_ID = 111111;
+    private final long CHAT_ID = 111111;
 
     @BeforeEach
     void preload() {

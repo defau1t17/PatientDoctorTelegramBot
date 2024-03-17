@@ -18,7 +18,7 @@ databaseChangeLog:
                   type: UUID
               - column:
                   name: chat_id
-                  type: int
+                  type: bigint
   - changeSet:
       id: 2
       author: default
@@ -104,7 +104,7 @@ databaseChangeLog:
                      unique: true
                - column:
                   name: chat_id
-                  type: int
+                  type: bigint
                   constraints:
                     unique: true
                - column:

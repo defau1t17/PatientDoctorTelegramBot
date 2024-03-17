@@ -20,6 +20,15 @@ public class CommandHandler {
     @Autowired
     private ChatStateRepository chatStateRepository;
 
+    private long chatID = -1;
+
+    private String message = "";
+
+    private String command = "";
+
+    private Command commandHandler = null;
+
+
     public CommandHandler(Map<String, Command> commands,
                           AuthenticationCommandHandler authenticationCommandHandler,
                           PatientsCommandHandler patientsCommandHandler,
@@ -35,23 +44,23 @@ public class CommandHandler {
     }
 
     public SendMessage handleCommands(Update update) {
-        String messageText = update.getMessage().getText();
-        String command = messageText.split(" ")[0];
-        long chatId = update.getMessage().getChatId();
-        Optional<ChatState> optionalChatStateByChat = chatStateRepository.findChatStateByChatID(Math.toIntExact(update.getMessage().getChatId()));
-        var commandHandler = commands.get(command);
+        if (update.hasMessage()) {
+            message = update.getMessage().getText();
+            command = message.split(" ")[0];
+            chatID = update.getMessage().getChatId();
+        } else if (update.hasCallbackQuery()) {
+            message = update.getCallbackQuery().getMessage().getText();
+            chatID = update.getCallbackQuery().getMessage().getChatId();
+        }
+        Optional<ChatState> optionalChatStateByChat = chatStateRepository.findChatStateByChatID(chatID);
+        commandHandler = commands.get(command);
         if (commandHandler != null) {
-            System.out.println("command block works");
             return commandHandler.sendResponse(update);
         } else if (optionalChatStateByChat.isPresent() && !optionalChatStateByChat.get().getChatStates().equals(ChatStates.DEFAULT)) {
-            System.out.println("state block works");
-
             commandHandler = commands.get(optionalChatStateByChat.get().getChatStates().getCommandReference());
             return commandHandler.sendResponse(update);
         } else {
-            return new SendMessage(String.valueOf(chatId), "Error");
+            return new SendMessage(String.valueOf(chatID), "Error");
         }
     }
-
-
 }

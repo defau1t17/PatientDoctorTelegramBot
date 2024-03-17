@@ -34,7 +34,7 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
 
     @Override
     public SendMessage sendResponse(Update update) {
-        ChatState chatState = chatStateRepository.findChatStateByChatID(Math.toIntExact(update.getMessage().getChatId())).orElse(null);
+        ChatState chatState = chatStateRepository.findChatStateByChatID(update.getMessage().getChatId()).orElse(null);
         if (chatState == null) {
             this.responseMessage = "Unknown error happened";
         } else {
@@ -74,14 +74,17 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
                 this.responseMessage = "You may add some description(if not just print '-') : ";
             }
             case WAITING_FOR_DESCRIPTION -> {
+                this.newPatient.setId(0);
                 this.newPatient.setDescription(message);
-                Patient optionalPatient = sendRequestForNewPatient(newPatient);
+                Patient optionalPatient = sendRequestForNewPatient();
                 if (optionalPatient != null) {
                     this.responseMessage = "New patient to be created : " + optionalPatient.toString();
                 } else {
                     this.responseMessage = "An error happened while validating a new patient!\n Unfortunately we can't save this patient";
                 }
-                clearNewPatient();
+//                clearNewPatient();
+//                System.out.println(newPatient);
+                newPatient = new Patient();
             }
             default -> {
                 chatState.setChatStates(ChatStates.DEFAULT);
@@ -97,8 +100,8 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
         this.newPatient = null;
     }
 
-    private Patient sendRequestForNewPatient(Patient patient) {
-        PatientDTO patientDTO = PatientDTO.covertPatientToDTO(patient);
+    private Patient sendRequestForNewPatient() {
+        PatientDTO patientDTO = PatientDTO.covertPatientToDTO(newPatient);
         ResponseEntity<Patient> patientResponseEntity = restTemplate.postForEntity("http://localhost:8080/api/v1/patient", patientDTO, Patient.class, "");
         return patientResponseEntity.getStatusCode().is2xxSuccessful() ?
                 patientResponseEntity.getBody() :

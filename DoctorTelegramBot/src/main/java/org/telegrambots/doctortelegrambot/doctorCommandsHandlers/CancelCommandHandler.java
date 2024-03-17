@@ -17,20 +17,20 @@ public class CancelCommandHandler implements Command {
 
     @Override
     public SendMessage sendResponse(Update update) {
-        ChatState chatState = chatStateRepository.findChatStateByChatID(Math.toIntExact(update.getMessage().getChatId())).orElse(null);
-        if (chatState == null) {
+        ChatState chatState = chatStateRepository.findChatStateByChatID(update.getMessage().getChatId()).orElse(null);
+        if (chatState == null || chatState.getChatStates().equals(ChatStates.DEFAULT)) {
             this.responseMessage = "Nothing to cancel";
         } else {
             rollbackStateToDefault(chatState);
         }
         sendMessage.setChatId(update.getMessage().getChatId());
         sendMessage.setText(responseMessage);
-        return null;
+        return sendMessage;
     }
 
     private void rollbackStateToDefault(ChatState chatState) {
         this.responseMessage = "Operation %s has canceled".formatted(chatState.getChatStates().getCommandReference());
         chatState.setChatStates(ChatStates.DEFAULT);
-        rollbackStateToDefault(chatState);
+        chatStateRepository.save(chatState);
     }
 }

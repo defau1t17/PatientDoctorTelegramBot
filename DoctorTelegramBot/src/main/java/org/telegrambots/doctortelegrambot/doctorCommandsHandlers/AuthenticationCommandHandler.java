@@ -33,7 +33,7 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
 
     @Override
     public SendMessage sendResponse(Update update) {
-        ChatState chatState = chatStateRepository.findChatStateByChatID(Math.toIntExact(update.getMessage().getChatId())).orElse(null);
+        ChatState chatState = chatStateRepository.findChatStateByChatID(update.getMessage().getChatId()).orElse(null);
         responseOnState(chatState, update);
         sendMessage.setText(responseMessage);
         sendMessage.setChatId(update.getMessage().getChatId());
@@ -45,7 +45,7 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
     public void responseOnState(ChatState chatState, Update update) {
         String text = update.getMessage().getText();
         if (chatState == null) {
-            chatState = chatStateRepository.save(new ChatState(Math.toIntExact(update.getMessage().getChatId())));
+            chatState = chatStateRepository.save(new ChatState(update.getMessage().getChatId()));
         }
         switch (chatState.getChatStates()) {
             case DEFAULT -> {
@@ -53,7 +53,7 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
             }
             case WAITING_FOR_TOKEN -> {
                 if (text != null && validateToken(text)) {
-                    if (authenticateClient(Math.toIntExact(update.getMessage().getChatId()), text)) {
+                    if (authenticateClient(update.getMessage().getChatId(), text)) {
                         this.responseMessage = TelegramBotResponses.AUTH_PASSED.getDescription();
                     } else {
                         this.responseMessage = TelegramBotResponses.BAD_CREDS.getDescription();
@@ -70,9 +70,8 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
         }
     }
 
-    private boolean authenticateClient(int chatID, String token) {
-        Map<String, String> values = Map.of("chatID", String.valueOf(chatID), "token", token);
-        ResponseEntity<HttpStatus> forEntity = restTemplate.exchange("http://localhost:8080/api/v1/authenticate?chatID={chatID}&token={token}", HttpMethod.POST, null, HttpStatus.class, values);
+    private boolean authenticateClient(long chatID, String token) {
+        ResponseEntity<HttpStatus> forEntity = restTemplate.exchange("http://localhost:8080/api/v1/authenticate?chatID={chatID}&token={token}", HttpMethod.POST, null, HttpStatus.class, Map.of("chatID", chatID, "token", token));
         return forEntity.getStatusCode().equals(HttpStatus.OK);
     }
 

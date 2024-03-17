@@ -36,7 +36,7 @@ public class DoctorRestControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-    private final int CHAT_ID = 13317711;
+    private final long CHAT_ID = 13317711;
 
     @BeforeEach
     void init() {

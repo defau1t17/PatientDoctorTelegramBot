@@ -26,7 +26,7 @@ public class PatientServiceTest {
     @Autowired
     private AuthenticationService authenticationService;
 
-    private final int CHAT_ID = 11111223;
+    private final long CHAT_ID = 11111223;
     private Patient patient;
 
     @BeforeEach
@@ -43,6 +43,11 @@ public class PatientServiceTest {
     @Test
     void findAllDoctorsTest() {
         assertNotNull(patientService.findAll());
+    }
+
+    @Test
+    void findAllPatientsByPage() {
+        assertNotNull(patientService.findAllByPage(0, 1).getContent());
     }
 
     @Test

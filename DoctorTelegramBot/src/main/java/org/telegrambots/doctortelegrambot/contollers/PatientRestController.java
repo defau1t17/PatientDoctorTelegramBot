@@ -22,23 +22,24 @@ public class PatientRestController {
     private final PermissionRepository permissionRepository;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPatientByID(@PathVariable String id) {
-        return patientService.findByID(Integer.parseInt(id)).isPresent() ?
+    public ResponseEntity<?> getPatientByID(@PathVariable int id) {
+        return patientService.findByID(id).isPresent() ?
                 ResponseEntity
-                        .ok(patientService.findByID(Integer.parseInt(id)).get()) :
+                        .ok(patientService.findByID(id).get()) :
                 ResponseEntity
                         .notFound()
                         .build();
     }
 
     @GetMapping
-    public ResponseEntity<?> getPatients() {
+    public ResponseEntity<?> getPatients(@RequestParam(name = "page") Optional<Integer> page, @RequestParam(name = "size") Optional<Integer> size) {
         return ResponseEntity
-                .ok(patientService.findAll());
+                .ok(patientService.findAllByPage(page.orElse(0), size.orElse(5)));
     }
 
     @PostMapping
     public ResponseEntity<?> createPatient(@RequestBody PatientDTO patientDTO) {
+        System.out.println(patientDTO);
         if (patientService.validatePatientBeforeSave(patientDTO.convertDTOToPatient())) {
             Patient patient = patientDTO.convertDTOToPatient();
             patient.setPersonalToken(Permission.tokenFabric(permissionRepository));

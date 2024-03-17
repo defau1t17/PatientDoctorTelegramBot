@@ -36,7 +36,7 @@ public class EmergencyRestControllerTest {
 
     @Mock
     private Patient patient;
-    private final int CHAT_ID = 1231231;
+    private final long CHAT_ID = 1231231;
     @Autowired
     private PatientService patientService;
     @Autowired
