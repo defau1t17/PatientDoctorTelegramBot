@@ -1,4 +1,4 @@
-package org.telegrambots.doctortelegrambot.doctorBot;
+package org.telegrambots.doctortelegrambot.doctorBotConfigurations;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @PropertySource("classpath:application.properties")
 @Data
-public class BotConfiguration {
+public class DoctorTelegramBotConfiguration {
     @Value("${bot.doctorbot.name}")
     private String botName;
 

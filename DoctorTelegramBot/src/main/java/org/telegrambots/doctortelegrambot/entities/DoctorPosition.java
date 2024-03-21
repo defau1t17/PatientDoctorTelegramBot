@@ -1,4 +1,4 @@
-package org.telegrambots.doctortelegrambot.entity;
+package org.telegrambots.doctortelegrambot.entities;
 
 public enum DoctorPosition {
     CHIEF_PHYSICIAN("Chief Physician"),

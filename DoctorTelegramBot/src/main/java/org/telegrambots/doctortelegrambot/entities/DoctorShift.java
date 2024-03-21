@@ -1,4 +1,4 @@
-package org.telegrambots.doctortelegrambot.entity;
+package org.telegrambots.doctortelegrambot.entities;
 
 public enum DoctorShift {
     DAILY_SHIFT("9:00-18:00"),

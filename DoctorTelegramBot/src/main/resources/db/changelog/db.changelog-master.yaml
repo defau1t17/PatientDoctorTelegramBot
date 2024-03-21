@@ -16,6 +16,9 @@ databaseChangeLog:
               - column:
                   name: token
                   type: UUID
+              - column:
+                  name: chat_id
+                  type: bigint
   - changeSet:
       id: 2
       author: default
@@ -29,11 +32,6 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     primaryKey: true
-                    unique: true
-              - column:
-                  name: chat_id
-                  type: int
-                  constraints:
                     unique: true
               - column:
                   name: name
@@ -71,11 +69,6 @@ databaseChangeLog:
                     primaryKey: true
                     unique: true
               - column:
-                  name: chat_id
-                  type: int
-                  constraints:
-                    unique: true
-              - column:
                   name: name
                   type: text
               - column:
@@ -91,5 +84,29 @@ databaseChangeLog:
                   name: doctor_shift
                   type: text
               - column:
+                  name: shift_status
+                  type: text
+              - column:
                   name: token_id
                   type: int
+  - changeSet:
+      id: 4
+      author: default
+      changes:
+        -  createTable:
+             tableName: states
+             columns:
+               - column:
+                   name: id
+                   type: int
+                   autoIncrement: true
+                   constraints:
+                     unique: true
+               - column:
+                  name: chat_id
+                  type: bigint
+                  constraints:
+                    unique: true
+               - column:
+                   name: chat_state
+                   type: text
