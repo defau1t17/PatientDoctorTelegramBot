@@ -1,6 +1,5 @@
 package org.telegrambots.doctortelegrambot.controllers;
 
-import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @AutoConfigureMockMvc
 @SpringBootTest
-@DirtiesContext
 public class EmergencyRestControllerTest {
 
     @Autowired
@@ -68,7 +66,6 @@ public class EmergencyRestControllerTest {
     }
 
     static {
-
         rabbitContainer = new RabbitMQContainer("rabbitmq:3-management")
                 .withExposedPorts(5672, 15672)
                 .withStartupTimeout(Duration.ofSeconds(100));

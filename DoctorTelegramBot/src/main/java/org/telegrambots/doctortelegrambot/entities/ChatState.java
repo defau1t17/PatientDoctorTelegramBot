@@ -23,4 +23,10 @@ public class ChatState {
         this.chat_id = chat_id;
         this.chatStates = ChatStates.DEFAULT;
     }
+
+    public ChatState updateChatState(ChatStates chatStates) {
+        this.chatStates = chatStates;
+        return this;
+    }
+
 }

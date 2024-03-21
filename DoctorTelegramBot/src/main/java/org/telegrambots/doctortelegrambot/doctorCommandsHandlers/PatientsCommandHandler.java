@@ -61,15 +61,7 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
             chatID = update.getCallbackQuery().getMessage().getChatId();
         }
         chatState = chatStateRepository.findChatStateByChatID(chatID).get();
-
         responseOnState(chatState, update);
-        if (chatState.getChatStates().equals(ChatStates.DEFAULT)) {
-            StateUpdatable.updateState(chatStateRepository, chatState, update.getMessage().getText().equals(PATIENT_MOVE_REFERENCE) ?
-                    PATIENT_MOVE_REFERENCE :
-                    PATIENTS_MOVE_REFERENCE);
-        } else if (chatState.getChatStates().equals(ChatStates.WAITING_FOR_PATIENT_ID)) {
-            StateUpdatable.updateState(chatStateRepository, chatState, chatState.getChatStates().getCommandReference());
-        }
     }
 
     private Patient getPatientByID(int id) {
@@ -84,7 +76,6 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
         }, Map.of("pageNumber", PAGE_NUMBER, "pageSize", PAGE_SIZE));
         MAX_PAGE_NUMBER = Objects.requireNonNull(patients.getBody()).getTotalPages() - 1;
         return patients.getBody().getContent();
-
     }
 
     private void setResponseMessageForPatient(Patient patient) {
@@ -110,6 +101,7 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
                     setResponseMessageForPatients(getPatients());
                     sendMessage.setReplyMarkup(patientsKeyboard.getPatientsKeyboard(PAGE_NUMBER, MAX_PAGE_NUMBER));
                 }
+                updateStateOnCommandOrState(update.getMessage().getText());
             }
             case WAITING_FOR_PATIENT_ID -> {
                 Patient patientByID = getPatientByID(Integer.parseInt(update.getMessage().getText()));
@@ -124,19 +116,36 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
                 switch (moveDirection) {
                     case "NEXT" -> {
                         PAGE_NUMBER++;
+                        setResponseMessageForPatients(getPatients());
+                        sendMessage.setReplyMarkup(patientsKeyboard.getPatientsKeyboard(PAGE_NUMBER, MAX_PAGE_NUMBER));
                     }
                     case "BACK" -> {
                         PAGE_NUMBER--;
+                        setResponseMessageForPatients(getPatients());
+                        sendMessage.setReplyMarkup(patientsKeyboard.getPatientsKeyboard(PAGE_NUMBER, MAX_PAGE_NUMBER));
+                    }
+                    case "STOP" -> {
+                        chatState.setChatStates(ChatStates.DEFAULT);
+                        chatStateRepository.save(chatState);
+                        responseMessage = "Stopped";
                     }
                 }
-                setResponseMessageForPatients(getPatients());
-                sendMessage.setReplyMarkup(patientsKeyboard.getPatientsKeyboard(PAGE_NUMBER, MAX_PAGE_NUMBER));
             }
             default -> {
                 chatState.setChatStates(ChatStates.DEFAULT);
                 chatState = chatStateRepository.save(chatState);
                 responseOnState(chatState, update);
             }
+        }
+    }
+
+    private void updateStateOnCommandOrState(String resource) {
+        if (chatState.getChatStates().equals(ChatStates.DEFAULT)) {
+            StateUpdatable.updateState(chatStateRepository, chatState, resource.equals(PATIENT_MOVE_REFERENCE) ?
+                    PATIENT_MOVE_REFERENCE :
+                    PATIENTS_MOVE_REFERENCE);
+        } else if (chatState.getChatStates().equals(ChatStates.WAITING_FOR_PATIENT_ID)) {
+            StateUpdatable.updateState(chatStateRepository, chatState, chatState.getChatStates().getCommandReference());
         }
     }
 

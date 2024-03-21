@@ -14,7 +14,6 @@ import org.telegrambots.doctortelegrambot.entities.ChatStates;
 import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
 import org.telegrambots.doctortelegrambot.exceptions.RestTemplateExceptionHandler;
 import org.telegrambots.doctortelegrambot.repositories.ChatStateRepository;
-
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,6 +33,9 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
     @Override
     public SendMessage sendResponse(Update update) {
         ChatState chatState = chatStateRepository.findChatStateByChatID(update.getMessage().getChatId()).orElse(null);
+        if (chatState == null) {
+            chatState = chatStateRepository.save(new ChatState(update.getMessage().getChatId()));
+        }
         responseOnState(chatState, update);
         sendMessage.setText(responseMessage);
         sendMessage.setChatId(update.getMessage().getChatId());
@@ -44,9 +46,7 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
     @Override
     public void responseOnState(ChatState chatState, Update update) {
         String text = update.getMessage().getText();
-        if (chatState == null) {
-            chatState = chatStateRepository.save(new ChatState(update.getMessage().getChatId()));
-        }
+
         switch (chatState.getChatStates()) {
             case DEFAULT -> {
                 this.responseMessage = "Please, write your personal access token \n(Avoid '@,|,/,!,#,$,%,^,&,*,(,),{,},[,]' symbols)\n";

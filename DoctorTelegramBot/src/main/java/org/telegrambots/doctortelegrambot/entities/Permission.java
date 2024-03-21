@@ -32,4 +32,8 @@ public final class Permission {
         return UUID.randomUUID();
     }
 
+    public boolean isAuthenticated() {
+        return this.chatID != -1;
+    }
+
 }

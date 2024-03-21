@@ -15,20 +15,29 @@ public class PatientsKeyboard {
     public InlineKeyboardMarkup getPatientsKeyboard(int page, int maxPage) {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
+        InlineKeyboardButton inlineKeyboardButton = null;
         if (page > 0) {
-            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+            inlineKeyboardButton = new InlineKeyboardButton();
             inlineKeyboardButton.setText("PREVIOUS");
             inlineKeyboardButton.setCallbackData("BACK");
             keyboardButtonsRow.add(inlineKeyboardButton);
         }
         if (page < maxPage) {
-            InlineKeyboardButton inlineKeyboardButton1 = new InlineKeyboardButton();
-            inlineKeyboardButton1.setText("NEXT");
-            inlineKeyboardButton1.setCallbackData("NEXT");
-            keyboardButtonsRow.add(inlineKeyboardButton1);
+            inlineKeyboardButton = new InlineKeyboardButton();
+            inlineKeyboardButton.setText("NEXT");
+            inlineKeyboardButton.setCallbackData("NEXT");
+            keyboardButtonsRow.add(inlineKeyboardButton);
         }
+
+        inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText("STOP");
+        inlineKeyboardButton.setCallbackData("STOP");
+        keyboardButtonsRow2.add(inlineKeyboardButton);
+
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow);
+        rowList.add(keyboardButtonsRow2);
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;
     }
