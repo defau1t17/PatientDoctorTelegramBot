@@ -1,12 +1,24 @@
 services:
-  postgres:
+  chat_db:
+    container_name: chat
     image: postgres:latest
     environment:
-      - 'POSTGRES_DB=telegramusers'
-      - 'POSTGRES_PASSWORD=telegrambot'
-      - 'POSTGRES_USER=telegrambot'
+      - 'POSTGRES_DB=authentication'
+      - 'POSTGRES_PASSWORD=authentication'
+      - 'POSTGRES_USER=authentication'
     ports:
-      - 5432:5432
+      - 5448:5432
+    restart: always
+
+  hostpital_db:
+    container_name: hospital
+    image: postgres:latest
+    environment:
+      - 'POSTGRES_DB=hospital'
+      - 'POSTGRES_PASSWORD=hospital'
+      - 'POSTGRES_USER=hospital'
+    ports:
+      - 5411:5432
     restart: always
 
   rabbitmq:
@@ -21,5 +33,6 @@ services:
 
   redis:
     image: redis:latest
+    container_name: caching
     ports:
       - 6379:6379

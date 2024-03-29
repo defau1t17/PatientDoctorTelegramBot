@@ -13,7 +13,6 @@ import org.telegrambots.doctortelegrambot.dto.PaginatedPatientsResponse;
 import org.telegrambots.doctortelegrambot.entities.ChatState;
 import org.telegrambots.doctortelegrambot.entities.ChatStates;
 import org.telegrambots.doctortelegrambot.entities.Patient;
-import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
 import org.telegrambots.doctortelegrambot.exceptions.RestTemplateExceptionHandler;
 import org.telegrambots.doctortelegrambot.repositories.ChatStateRepository;
 
@@ -127,6 +126,7 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
                     case "STOP" -> {
                         chatState.setChatStates(ChatStates.DEFAULT);
                         chatStateRepository.save(chatState);
+                        sendMessage.setReplyMarkup(null);
                         responseMessage = "Stopped";
                     }
                 }

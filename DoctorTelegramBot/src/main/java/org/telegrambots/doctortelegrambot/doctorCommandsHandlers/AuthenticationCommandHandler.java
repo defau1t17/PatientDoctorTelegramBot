@@ -11,7 +11,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegrambots.doctortelegrambot.entities.ChatState;
 import org.telegrambots.doctortelegrambot.entities.ChatStates;
-import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
 import org.telegrambots.doctortelegrambot.exceptions.RestTemplateExceptionHandler;
 import org.telegrambots.doctortelegrambot.repositories.ChatStateRepository;
 import java.util.Map;
