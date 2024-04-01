@@ -15,7 +15,7 @@ import org.telegrambots.doctortelegrambot.entities.ChatStates;
 import org.telegrambots.doctortelegrambot.entities.Patient;
 import org.telegrambots.doctortelegrambot.exceptions.RestTemplateExceptionHandler;
 import org.telegrambots.doctortelegrambot.repositories.ChatStateRepository;
-
+import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,7 +49,8 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
     public SendMessage sendResponse(Update update) {
         triggerBlock(update);
         sendMessage.setChatId(chatID);
-        sendMessage.setText(responseMessage);
+        sendMessage.setText(responseMessage);import org.telegrambots.doctortelegrambot.entities.Te
+
         return sendMessage;
     }
 

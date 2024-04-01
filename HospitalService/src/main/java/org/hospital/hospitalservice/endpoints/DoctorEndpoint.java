@@ -23,7 +23,7 @@ public class DoctorEndpoint {
 
     private final UserService userService;
 
-    @Cacheable(value = "pageWithDoctors")
+//    @Cacheable(value = "pageWithDoctors")
     @GetMapping
     public ResponseEntity<?> getAllDoctors(@RequestParam(value = "pageNumber") Optional<Integer> pageNumber,
                                            @RequestParam(value = "pageSize") Optional<Integer> pageSize) {
@@ -31,7 +31,7 @@ public class DoctorEndpoint {
                 .ok(doctorService.findAll(pageNumber.orElse(0), pageSize.orElse(5)));
     }
 
-    @Cacheable(value = "doctorByID")
+//    @Cacheable(value = "doctorByID")
     @GetMapping("/{id}")
     public ResponseEntity<?> getDoctorByID(@PathVariable(value = "id") long id) {
         Optional<Doctor> optionalDoctor = doctorService.findByID(id);
@@ -43,8 +43,9 @@ public class DoctorEndpoint {
                         .build();
     }
 
-    @Cacheable(value = "doctorByChatID")
+//    @Cacheable(value = "doctorByChatID")
     @GetMapping("/chat/{chatID}")
+
     public ResponseEntity<?> findDoctorByChatID(@PathVariable(value = "chatID") long chatID) {
         Optional<Doctor> optionalDoctor = doctorService.findByChatID(chatID);
         return optionalDoctor.isPresent() ?

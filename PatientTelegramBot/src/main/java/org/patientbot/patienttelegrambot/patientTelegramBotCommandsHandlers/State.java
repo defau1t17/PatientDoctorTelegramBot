@@ -7,5 +7,6 @@ public interface State {
 
     void responseOnState(ChatStates chatState, Update update);
 
+    void moveChatState(long CHAT_ID);
 
 }

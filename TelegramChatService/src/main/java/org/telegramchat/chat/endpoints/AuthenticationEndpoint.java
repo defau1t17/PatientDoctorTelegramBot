@@ -10,14 +10,14 @@ import org.telegramchat.chat.service.AuthenticationService;
 
 import java.util.Optional;
 
-@RestController()
+@RestController
 @RequestMapping("/authenticate")
 @RequiredArgsConstructor
 public class AuthenticationEndpoint {
 
     private final AuthenticationService service;
 
-    @Cacheable(value = "pageWithAuthentication")
+//    @Cacheable(value = "pageWithAuthentication")
     @GetMapping
     public ResponseEntity<?> getAuthenticationPage(@RequestParam(value = "pageNumber") Optional<Integer> pageNumber,
                                                    @RequestParam(value = "pageSize") Optional<Integer> pageSize) {
@@ -25,7 +25,7 @@ public class AuthenticationEndpoint {
                 .ok(service.findAll(pageNumber.orElse(0), pageSize.orElse(5)));
     }
 
-    @Cacheable("authenticationByChatID")
+//    @Cacheable("authenticationByChatID")
     @GetMapping("/{chatID}")
     public ResponseEntity<?> getAuthenticationByChatID(@PathVariable("chatID") long chatID) {
         Optional<TelegramBotAuthentication> optional = service.findByChatID(chatID);
