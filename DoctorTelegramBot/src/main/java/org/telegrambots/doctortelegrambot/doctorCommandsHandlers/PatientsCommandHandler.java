@@ -49,7 +49,7 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
     public SendMessage sendResponse(Update update) {
         triggerBlock(update);
         sendMessage.setChatId(chatID);
-        sendMessage.setText(responseMessage);import org.telegrambots.doctortelegrambot.entities.Te
+        sendMessage.setText(responseMessage);
 
         return sendMessage;
     }

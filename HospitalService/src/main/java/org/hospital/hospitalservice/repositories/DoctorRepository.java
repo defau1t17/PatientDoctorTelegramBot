@@ -1,9 +1,11 @@
 package org.hospital.hospitalservice.repositories;
 
 import org.hospital.hospitalservice.entities.Doctor;
+import org.hospital.hospitalservice.entities.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface DoctorRepository extends JpaRepository<Doctor, Long> {
@@ -13,4 +15,8 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
 
     @Query(value = "SELECT doctor FROM Doctor doctor WHERE doctor.user.chatID = ?1")
     Optional<Doctor> findDoctorByChatID(long chatID);
+
+    @Query(value = "SELECT doctor FROM Doctor doctor JOIN doctor.patients pat WHERE pat.id = ?1")
+    Optional<List<Doctor>> findAllByPatientIDOrWorkroom(long id);
+
 }

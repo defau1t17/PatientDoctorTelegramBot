@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegrambots.doctortelegrambot.entities.ChatState;
 import org.telegrambots.doctortelegrambot.entities.ChatStates;
 import org.telegrambots.doctortelegrambot.entities.Permission;
+import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
 import org.telegrambots.doctortelegrambot.repositories.ChatStateRepository;
 import org.telegrambots.doctortelegrambot.repositories.PermissionRepository;
 
