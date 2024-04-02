@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.hospital.hospitalservice.dtos.DoctorDTO;
 import org.hospital.hospitalservice.entities.Doctor;
 import org.hospital.hospitalservice.entities.User;
+import org.hospital.hospitalservice.repositories.DoctorRepository;
 import org.hospital.hospitalservice.services.DoctorService;
 import org.hospital.hospitalservice.services.UserService;
 import org.springframework.cache.annotation.CachePut;
@@ -23,7 +24,9 @@ public class DoctorEndpoint {
 
     private final UserService userService;
 
-//    @Cacheable(value = "pageWithDoctors")
+    private final DoctorRepository doctorRepository;
+
+    //    @Cacheable(value = "pageWithDoctors")
     @GetMapping
     public ResponseEntity<?> getAllDoctors(@RequestParam(value = "pageNumber") Optional<Integer> pageNumber,
                                            @RequestParam(value = "pageSize") Optional<Integer> pageSize) {
@@ -31,7 +34,7 @@ public class DoctorEndpoint {
                 .ok(doctorService.findAll(pageNumber.orElse(0), pageSize.orElse(5)));
     }
 
-//    @Cacheable(value = "doctorByID")
+    //    @Cacheable(value = "doctorByID")
     @GetMapping("/{id}")
     public ResponseEntity<?> getDoctorByID(@PathVariable(value = "id") long id) {
         Optional<Doctor> optionalDoctor = doctorService.findByID(id);
@@ -43,7 +46,12 @@ public class DoctorEndpoint {
                         .build();
     }
 
-//    @Cacheable(value = "doctorByChatID")
+    @GetMapping("/patient/{id}")
+    public ResponseEntity<?> test(@PathVariable(value = "id") long id) {
+        return ResponseEntity.ok(doctorRepository.findAllByPatientIDOrWorkroom(id));
+    }
+
+    //    @Cacheable(value = "doctorByChatID")
     @GetMapping("/chat/{chatID}")
 
     public ResponseEntity<?> findDoctorByChatID(@PathVariable(value = "chatID") long chatID) {

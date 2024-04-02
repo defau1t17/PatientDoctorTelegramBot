@@ -21,7 +21,7 @@ public class Doctor {
     private DoctorShift doctorShift;
     @Enumerated(EnumType.STRING)
     private ShiftStatus shiftStatus;
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Patient> patients;
     @OneToOne
     private User user;

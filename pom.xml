@@ -11,6 +11,7 @@
         <module>DoctorTelegramBot</module>
         <module>TelegramChatService</module>
         <module>HospitalService</module>
+        <module>EmergencyService</module>
     </modules>
 </project>
 
