@@ -23,8 +23,13 @@ public class EmergencyEndpoint {
     @PostMapping
     public ResponseEntity<?> getHelp(@RequestParam long chatID) {
         Optional<PatientDTO> patientByChatID = requestService.getPatientByChatID(chatID);
+        if (patientByChatID.isEmpty()) {
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
         Optional<List<DoctorDTO>> doctorsByPatientID = requestService.getDoctorsByPatientID(patientByChatID.get().getId());
-        if (patientByChatID.isPresent() && doctorsByPatientID.isPresent()) {
+        if (doctorsByPatientID.isPresent()) {
             resolverService.emergencyCallerByPatientState(doctorsByPatientID.get(), patientByChatID.get());
             return ResponseEntity
                     .ok()

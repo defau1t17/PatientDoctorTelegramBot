@@ -2,11 +2,13 @@ package org.hospital.hospitalservice.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hospital.hospitalservice.entities.Patient;
 import org.hospital.hospitalservice.entities.PatientState;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class PatientDTO {
     private String name;
     private String secondName;

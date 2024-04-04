@@ -27,11 +27,15 @@ public class CommandHandler implements Command {
 
 
     public CommandHandler(AuthenticationCommandHandler authenticationCommandHandler,
-                          DoctorCommandHandler doctorCommandHandler, MainRequestService requestService) {
+                          DoctorCommandHandler doctorCommandHandler,
+                          MainRequestService requestService,
+                          EmergencyCommandHandler emergencyCommandHandler) {
         this.requestService = requestService;
-        commandMap = Map.of("/authenticate", authenticationCommandHandler,
+        commandMap = Map.of(
+                "/authenticate", authenticationCommandHandler,
                 "/doctors", doctorCommandHandler,
-                "/doctor_id", doctorCommandHandler);
+                "/doctor_id", doctorCommandHandler,
+                "/emergency", emergencyCommandHandler);
     }
 
 

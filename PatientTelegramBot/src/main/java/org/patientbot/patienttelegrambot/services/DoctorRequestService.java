@@ -1,5 +1,6 @@
 package org.patientbot.patienttelegrambot.services;
 
+import lombok.RequiredArgsConstructor;
 import org.patientbot.patienttelegrambot.dtos.ChatStateDTO;
 import org.patientbot.patienttelegrambot.dtos.DoctorDTO;
 import org.patientbot.patienttelegrambot.dtos.PagebleDoctorDTO;
@@ -15,11 +16,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+
 public class DoctorRequestService {
 
-    private final RestTemplate restTemplate = new RestTemplateBuilder()
-            .errorHandler(new RestTemplateExceptionHandler())
-            .build();
+    private final RestTemplate restTemplate;
 
     public Optional<ChatStateDTO> getChatState(Long chatID) {
         ResponseEntity<ChatStateDTO> optionalChatState = restTemplate.getForEntity("http://localhost:8082/chat/api/chatstate/%s"

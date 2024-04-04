@@ -7,12 +7,11 @@ import org.hospital.hospitalservice.entities.User;
 import org.hospital.hospitalservice.repositories.DoctorRepository;
 import org.hospital.hospitalservice.services.DoctorService;
 import org.hospital.hospitalservice.services.UserService;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -47,13 +46,18 @@ public class DoctorEndpoint {
     }
 
     @GetMapping("/patient/{id}")
-    public ResponseEntity<?> test(@PathVariable(value = "id") long id) {
-        return ResponseEntity.ok(doctorRepository.findAllByPatientIDOrWorkroom(id));
+    public ResponseEntity<?> getAllDoctorsByPatient(@PathVariable(value = "id") long id) {
+        Optional<List<Doctor>> allByPatientID = doctorRepository.findAllByPatientID(id);
+        return allByPatientID.isPresent() ?
+                ResponseEntity
+                        .ok(allByPatientID.get()) :
+                ResponseEntity
+                        .notFound()
+                        .build();
     }
 
     //    @Cacheable(value = "doctorByChatID")
     @GetMapping("/chat/{chatID}")
-
     public ResponseEntity<?> findDoctorByChatID(@PathVariable(value = "chatID") long chatID) {
         Optional<Doctor> optionalDoctor = doctorService.findByChatID(chatID);
         return optionalDoctor.isPresent() ?
@@ -66,7 +70,6 @@ public class DoctorEndpoint {
 
     @PostMapping
     public ResponseEntity<?> createNewDoctor(@RequestBody DoctorDTO doctor) {
-        System.out.println(doctor.toString());
         Doctor potentialDoctor = doctor.convertDTOTOPatient();
         if (doctorService.validateBeforeSave(potentialDoctor)) {
             return ResponseEntity
@@ -87,7 +90,7 @@ public class DoctorEndpoint {
                         .build();
     }
 
-    @CachePut(value = "doctor", key = "shiftStatus")
+//    @CachePut(value = "doctor", key = "shiftStatus")
     @PostMapping("/{chatID}/shift")
     public ResponseEntity<?> updateDoctorShift(@PathVariable(value = "chatID") long chatID) {
         Optional<Doctor> optionalDoctor = doctorService.findByChatID(chatID);
@@ -136,7 +139,7 @@ public class DoctorEndpoint {
     }
 
     @PatchMapping
-    public ResponseEntity<?> updatePatientChatID(@RequestParam long chatID, @RequestParam String token) {
+    public ResponseEntity<?> updateDoctorChatID(@RequestParam long chatID, @RequestParam String token) {
         Optional<User> optionalUser = userService.findUserByToken(token);
         return optionalUser.isPresent() ?
                 ResponseEntity

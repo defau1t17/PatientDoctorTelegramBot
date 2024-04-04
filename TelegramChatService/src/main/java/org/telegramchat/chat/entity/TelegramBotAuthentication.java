@@ -35,4 +35,13 @@ public final class TelegramBotAuthentication {
         this.chatID = chatID;
         return this;
     }
+
+//    @Override
+//    public String toString() {
+//        return "{" +
+//                "id=" + id +
+//                ", token='" + token + '\'' +
+//                ", chatID=" + chatID +
+//                '}';
+//    }
 }

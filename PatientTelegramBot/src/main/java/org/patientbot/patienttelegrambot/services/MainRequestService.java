@@ -15,10 +15,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MainRequestService {
 
-    private final RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new RestTemplateExceptionHandler()).build();
+    private final RestTemplate restTemplate;
 
     public Optional<ChatStateDTO> getChatState(long chatID) {
-        ResponseEntity<ChatStateDTO> optionalChatState = restTemplate.getForEntity("http://localhost:8082/chat/api/chatstate/%s".formatted(chatID), ChatStateDTO.class);
+        ResponseEntity<ChatStateDTO> optionalChatState = restTemplate.getForEntity("http://localhost:8082/chat/api/chatstate/%s" .formatted(chatID), ChatStateDTO.class);
         System.out.println(optionalChatState.getStatusCode());
         return optionalChatState.getStatusCode().is2xxSuccessful() ?
                 Optional.of(optionalChatState.getBody()) :
@@ -26,14 +26,14 @@ public class MainRequestService {
     }
 
     public Optional<ChatStateDTO> createChatState(long chatID) {
-        ResponseEntity<ChatStateDTO> optionalChatState = restTemplate.postForEntity("http://localhost:8082/chat/api/chatstate?chatID=%s".formatted(chatID), null, ChatStateDTO.class);
+        ResponseEntity<ChatStateDTO> optionalChatState = restTemplate.postForEntity("http://localhost:8082/chat/api/chatstate?chatID=%s" .formatted(chatID), null, ChatStateDTO.class);
         return optionalChatState.getStatusCode().is2xxSuccessful() ?
                 Optional.of(optionalChatState.getBody()) :
                 Optional.empty();
     }
 
     public Optional<AuthenticateDTO> getAuthenticationStatus(long chatID) {
-        ResponseEntity<AuthenticateDTO> optionalAuthenticationStatus = restTemplate.getForEntity("http://localhost:8082/chat/api/authenticate/%s".formatted(chatID), AuthenticateDTO.class);
+        ResponseEntity<AuthenticateDTO> optionalAuthenticationStatus = restTemplate.getForEntity("http://localhost:8082/chat/api/authenticate/%s" .formatted(chatID), AuthenticateDTO.class);
         return optionalAuthenticationStatus.getStatusCode().is2xxSuccessful() ?
                 Optional.of(optionalAuthenticationStatus.getBody()) :
                 Optional.empty();

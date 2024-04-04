@@ -1,8 +1,15 @@
 package org.hospital.hospitalservice.endpoints;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hospital.hospitalservice.dtos.DoctorDTO;
+import org.hospital.hospitalservice.dtos.PatientDTO;
+import org.hospital.hospitalservice.entities.Doctor;
 import org.hospital.hospitalservice.entities.Patient;
 import org.hospital.hospitalservice.entities.PatientState;
+import org.hospital.hospitalservice.entities.User;
 import org.hospital.hospitalservice.services.PatientService;
+import org.hospital.hospitalservice.services.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -21,8 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @ExtendWith(SpringExtension.class)
@@ -34,269 +41,207 @@ class PatientEndpointTest {
 
     @MockBean
     private PatientService mockPatientService;
+    @MockBean
+    private UserService mockUserService;
+    private Patient patient;
+
+    private final int pageSize = 1;
+
+    private final int pageNumber = 0;
+
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @BeforeEach
+    void setUp() {
+        patient = spy(Patient.class);
+        patient.setUser(spy(User.class));
+    }
+
 
     @Test
     void testGetPatientByID() throws Exception {
-        // Setup
-        // Configure PatientService.findByID(...).
-        final Patient patient = new Patient();
-        patient.setId(0);
-        patient.setDisease("disease");
-        patient.setPatientState(PatientState.STABLE);
-        patient.setChamberNumber(0);
-        patient.setDescription("description");
-        final Optional<Patient> optionalPatient = Optional.of(patient);
-        when(mockPatientService.findByID(0L)).thenReturn(optionalPatient);
+        when(mockPatientService.findByID(anyLong())).thenReturn(Optional.of(patient));
 
-        // Run the test
-        final MockHttpServletResponse response = mockMvc.perform(get("/patients/{id}", 0)
+        final MockHttpServletResponse response = mockMvc.perform(get("/patients/{id}", anyLong())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals(objectMapper.writeValueAsString(patient), response.getContentAsString());
     }
 
     @Test
     void testGetPatientByID_PatientServiceReturnsAbsent() throws Exception {
-        // Setup
-        when(mockPatientService.findByID(0L)).thenReturn(Optional.empty());
+        when(mockPatientService.findByID(anyLong())).thenReturn(Optional.empty());
 
-        // Run the test
-        final MockHttpServletResponse response = mockMvc.perform(get("/patients/{id}", 0)
+        final MockHttpServletResponse response = mockMvc.perform(get("/patients/{id}", anyLong())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
     }
 
     @Test
     void testGetPatientByChatID() throws Exception {
-        // Setup
-        // Configure PatientService.findByChatID(...).
-        final Patient patient = new Patient();
-        patient.setId(0);
-        patient.setDisease("disease");
-        patient.setPatientState(PatientState.STABLE);
-        patient.setChamberNumber(0);
-        patient.setDescription("description");
-        final Optional<Patient> optionalPatient = Optional.of(patient);
-        when(mockPatientService.findByChatID(0L)).thenReturn(optionalPatient);
+        when(mockPatientService.findByChatID(anyLong())).thenReturn(Optional.of(patient));
 
-        // Run the test
-        final MockHttpServletResponse response = mockMvc.perform(get("/patients/chat/{chatID}", 0)
+        final MockHttpServletResponse response = mockMvc.perform(get("/patients/chat/{chatID}", anyLong())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals(objectMapper.writeValueAsString(patient), response.getContentAsString());
     }
 
     @Test
     void testGetPatientByChatID_PatientServiceReturnsAbsent() throws Exception {
-        // Setup
-        when(mockPatientService.findByChatID(0L)).thenReturn(Optional.empty());
+        when(mockPatientService.findByChatID(anyLong())).thenReturn(Optional.empty());
 
-        // Run the test
-        final MockHttpServletResponse response = mockMvc.perform(get("/patients/chat/{chatID}", 0)
+        final MockHttpServletResponse response = mockMvc.perform(get("/patients/chat/{chatID}", anyLong())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
     }
 
     @Test
     void testGetPatients() throws Exception {
-        // Setup
-        // Configure PatientService.findAll(...).
-        final Patient patient = new Patient();
-        patient.setId(0);
-        patient.setDisease("disease");
-        patient.setPatientState(PatientState.STABLE);
-        patient.setChamberNumber(0);
-        patient.setDescription("description");
-        final Page<Patient> patients = new PageImpl<>(List.of(patient));
-        when(mockPatientService.findAll(0, 0)).thenReturn(patients);
 
-        // Run the test
+        final Page<Patient> page = new PageImpl<>(List.of(spy(Patient.class)), PageRequest.of(pageNumber, pageSize), 1L);
+        when(mockPatientService.findAll(anyInt(), anyInt())).thenReturn(page);
+
         final MockHttpServletResponse response = mockMvc.perform(get("/patients")
-                        .param("page", "0")
-                        .param("size", "0")
+                        .param("page", anyString())
+                        .param("size", anyString())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals(objectMapper.writeValueAsString(page), response.getContentAsString());
     }
 
     @Test
     void testGetPatients_PatientServiceReturnsNoItems() throws Exception {
-        // Setup
-        when(mockPatientService.findAll(0, 0)).thenReturn(new PageImpl<>(Collections.emptyList()));
 
-        // Run the test
+        final Page<Patient> emptyPage = new PageImpl<>(List.of(), PageRequest.of(pageNumber, pageSize), 1L);
+        when(mockPatientService.findAll(0, 0)).thenReturn(emptyPage);
+
         final MockHttpServletResponse response = mockMvc.perform(get("/patients")
-                        .param("page", "0")
-                        .param("size", "0")
+                        .param("page", anyString())
+                        .param("size", anyString())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals("", response.getContentAsString());
     }
 
     @Test
     void testCreatePatient() throws Exception {
-        // Setup
-        // Configure PatientService.validateBeforeSave(...).
-        final Patient entity = new Patient();
-        entity.setId(0);
-        entity.setDisease("disease");
-        entity.setPatientState(PatientState.STABLE);
-        entity.setChamberNumber(0);
-        entity.setDescription("description");
-        when(mockPatientService.validateBeforeSave(entity)).thenReturn(false);
+        when(mockPatientService.validateBeforeSave(any(Patient.class))).thenReturn(true);
+        when(mockPatientService.create(any(Patient.class))).thenReturn(patient);
 
-        // Run the test
         final MockHttpServletResponse response = mockMvc.perform(post("/patients")
-                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(spy(PatientDTO.class)))
+                        .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals(objectMapper.writeValueAsString(patient), response.getContentAsString());
     }
 
     @Test
-    void testCreatePatient_PatientServiceValidateBeforeSaveReturnsTrue() throws Exception {
-        // Setup
-        // Configure PatientService.validateBeforeSave(...).
-        final Patient entity = new Patient();
-        entity.setId(0);
-        entity.setDisease("disease");
-        entity.setPatientState(PatientState.STABLE);
-        entity.setChamberNumber(0);
-        entity.setDescription("description");
-        when(mockPatientService.validateBeforeSave(entity)).thenReturn(true);
+    void testCreatePatientValidationFailure() throws Exception {
+        when(mockPatientService.validateBeforeSave(any())).thenReturn(false);
 
-        // Configure PatientService.create(...).
-        final Patient patient = new Patient();
-        patient.setId(0);
-        patient.setDisease("disease");
-        patient.setPatientState(PatientState.STABLE);
-        patient.setChamberNumber(0);
-        patient.setDescription("description");
-        final Patient entity1 = new Patient();
-        entity1.setId(0);
-        entity1.setDisease("disease");
-        entity1.setPatientState(PatientState.STABLE);
-        entity1.setChamberNumber(0);
-        entity1.setDescription("description");
-        when(mockPatientService.create(entity1)).thenReturn(patient);
-
-        // Run the test
         final MockHttpServletResponse response = mockMvc.perform(post("/patients")
-                        .content("content").contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(spy(PatientDTO.class)))
+                        .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
+        assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
+    }
+
+    @Test
+    void testUpdatePatientChatID() throws Exception {
+        User user = spy(User.class);
+        when(mockUserService.findUserByToken(anyString())).thenReturn(Optional.ofNullable(spy(User.class)));
+        when(mockUserService.updateUserChatID(any(User.class), anyLong())).thenReturn(user);
+
+        final MockHttpServletResponse response = mockMvc.perform(patch("/patients")
+                        .param("chatID", "0")
+                        .param("token", "token")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals(objectMapper.writeValueAsString(user), response.getContentAsString());
+    }
+
+    @Test
+    void testUpdatePatientChatID_UserServiceFindUserByTokenReturnsAbsent() throws Exception {
+        when(mockUserService.findUserByToken(anyString())).thenReturn(Optional.empty());
+
+        final MockHttpServletResponse response = mockMvc.perform(patch("/patients")
+                        .param("chatID", "0")
+                        .param("token", "token")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
     }
 
     @Test
     void testDeletePatientByID() throws Exception {
-        // Setup
-        // Configure PatientService.findByID(...).
-        final Patient patient = new Patient();
-        patient.setId(0);
-        patient.setDisease("disease");
-        patient.setPatientState(PatientState.STABLE);
-        patient.setChamberNumber(0);
-        patient.setDescription("description");
-        final Optional<Patient> optionalPatient = Optional.of(patient);
-        when(mockPatientService.findByID(0L)).thenReturn(optionalPatient);
+        when(mockPatientService.findByID(any())).thenReturn(Optional.of(patient));
 
-        // Run the test
-        final MockHttpServletResponse response = mockMvc.perform(delete("/patients/{id}", 0)
+        final MockHttpServletResponse response = mockMvc.perform(delete("/patients/{id}", anyLong())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals("deleted successfully", response.getContentAsString());
 
-        // Confirm PatientService.delete(...).
-        final Patient entity = new Patient();
-        entity.setId(0);
-        entity.setDisease("disease");
-        entity.setPatientState(PatientState.STABLE);
-        entity.setChamberNumber(0);
-        entity.setDescription("description");
-        verify(mockPatientService).delete(entity);
+        verify(mockPatientService).delete(any());
+
     }
 
     @Test
     void testDeletePatientByID_PatientServiceFindByIDReturnsAbsent() throws Exception {
-        // Setup
-        when(mockPatientService.findByID(0L)).thenReturn(Optional.empty());
+        when(mockPatientService.findByID(anyLong())).thenReturn(Optional.empty());
 
-        // Run the test
-        final MockHttpServletResponse response = mockMvc.perform(delete("/patients/{id}", 0)
+        final MockHttpServletResponse response = mockMvc.perform(delete("/patients/{id}", anyLong())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
     }
 
     @Test
     void testDeletePatientByChatID() throws Exception {
-        // Setup
-        // Configure PatientService.findByChatID(...).
-        final Patient patient = new Patient();
-        patient.setId(0);
-        patient.setDisease("disease");
-        patient.setPatientState(PatientState.STABLE);
-        patient.setChamberNumber(0);
-        patient.setDescription("description");
-        final Optional<Patient> optionalPatient = Optional.of(patient);
-        when(mockPatientService.findByChatID(0L)).thenReturn(optionalPatient);
+        when(mockPatientService.findByChatID(anyLong())).thenReturn(Optional.of(patient));
 
-        // Run the test
-        final MockHttpServletResponse response = mockMvc.perform(delete("/patients/chat/{chatID}", 0)
+        final MockHttpServletResponse response = mockMvc.perform(delete("/patients/chat/{chatID}", anyLong())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
         assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
-        verify(mockPatientService).deleteByChatID(0L);
+        assertEquals("deleted successfully", response.getContentAsString());
+
+        verify(mockPatientService).deleteByChatID(anyLong());
     }
 
     @Test
     void testDeletePatientByChatID_PatientServiceFindByChatIDReturnsAbsent() throws Exception {
-        // Setup
-        when(mockPatientService.findByChatID(0L)).thenReturn(Optional.empty());
+        when(mockPatientService.findByChatID(anyLong())).thenReturn(Optional.empty());
 
-        // Run the test
-        final MockHttpServletResponse response = mockMvc.perform(delete("/patients/chat/{chatID}", 0)
+        final MockHttpServletResponse response = mockMvc.perform(delete("/patients/chat/{chatID}", anyLong())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        // Verify the results
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertEquals("expectedResponse", response.getContentAsString());
+        assertEquals(HttpStatus.NOT_FOUND.value(), response.getStatus());
     }
 }

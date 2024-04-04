@@ -62,7 +62,6 @@ public class StateService extends ServiceDAO<ChatState, Integer> {
     @Transactional
     public ChatState moveState(ChatState chatState, String moveDirection) {
         String commandReference = chatState.getChatStates().getCommandReference();
-        System.out.println(moveDirection);
         switch (moveDirection) {
             case "next" -> {
                 chatState.setChatStates(chatState.getChatStates().moveToNext(commandReference));
