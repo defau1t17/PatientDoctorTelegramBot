@@ -1,4 +1,4 @@
-package org.telegrambots.doctortelegrambot.doctorBotConfigurations;
+package org.telegrambots.doctortelegrambot.configurations;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

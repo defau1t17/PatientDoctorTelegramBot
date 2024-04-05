@@ -1,11 +1,11 @@
-package org.telegrambots.doctortelegrambot.contollers;
+package org.telegrambots.doctortelegrambot.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegrambots.doctortelegrambot.doctorBotConfigurations.DoctorTelegramBotConfiguration;
+import org.telegrambots.doctortelegrambot.configurations.DoctorTelegramBotConfiguration;
 import org.telegrambots.doctortelegrambot.doctorCommandsHandlers.CommandHandler;
 
 @Component
@@ -33,8 +33,5 @@ public class DoctorTelegramBotController extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
-
     }
-
-
 }

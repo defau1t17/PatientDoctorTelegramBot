@@ -1,48 +1,42 @@
 package org.telegrambots.doctortelegrambot.doctorCommandsHandlers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegrambots.doctortelegrambot.dto.NewPatientDTO;
 import org.telegrambots.doctortelegrambot.dto.PatientDTO;
-import org.telegrambots.doctortelegrambot.entities.ChatState;
-import org.telegrambots.doctortelegrambot.entities.ChatStates;
-import org.telegrambots.doctortelegrambot.entities.Patient;
-import org.telegrambots.doctortelegrambot.entities.PatientState;
-import org.telegrambots.doctortelegrambot.exceptions.RestTemplateExceptionHandler;
-import org.telegrambots.doctortelegrambot.repositories.ChatStateRepository;
+import org.telegrambots.doctortelegrambot.entities.*;
+import org.telegrambots.doctortelegrambot.services.PatientRequestService;
+
+import java.util.Optional;
 
 
 @Component
 @RequiredArgsConstructor
 public class NewPatientCommandHandler implements Command, StateUpdatable {
-    private SendMessage sendMessage = new SendMessage();
+    private final SendMessage sendMessage = new SendMessage();
 
-    private Patient newPatient = new Patient();
+    private final PatientRequestService requestService;
 
-    private final ChatStateRepository chatStateRepository;
-
-    private final RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new RestTemplateExceptionHandler()).build();
+    private NewPatientDTO newPatientDTO = new NewPatientDTO();
 
     private String responseMessage = "";
 
-    private final String moveReference = "/new_patient";
 
+    private long CHAT_ID = 0;
 
     @Override
     public SendMessage sendResponse(Update update) {
-        ChatState chatState = chatStateRepository.findChatStateByChatID(update.getMessage().getChatId()).orElse(null);
-        if (chatState == null) {
-            this.responseMessage = "Unknown error happened";
+        CHAT_ID = update.getMessage().getChatId();
+        Optional<ChatState> chatState = requestService.getChatState(CHAT_ID);
+        if (chatState.isPresent()) {
+            responseOnState(chatState.get(), update);
         } else {
-            responseOnState(chatState, update);
-            StateUpdatable.updateState(chatStateRepository, chatState, moveReference);
+            this.responseMessage = TelegramBotResponses.SOME_ERROR.getDescription();
         }
         sendMessage.setText(responseMessage);
-        sendMessage.setChatId(update.getMessage().getChatId());
+        sendMessage.setChatId(CHAT_ID);
         return sendMessage;
     }
 
@@ -52,58 +46,70 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
         switch (chatState.getChatStates()) {
             case DEFAULT -> {
                 this.responseMessage = "Please write patient name below : ";
+                requestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_NAME);
             }
             case WAITING_FOR_NAME -> {
-                this.newPatient.setName(message);
+                this.newPatientDTO.setName(message);
                 this.responseMessage = "Please write patient second name below : ";
+                moveChatState(CHAT_ID);
             }
             case WAITING_FOR_SECONDNAME -> {
-                this.newPatient.setSecondName(message);
+                this.newPatientDTO.setSecondName(message);
                 this.responseMessage = "Please describe patient disease : ";
+                moveChatState(CHAT_ID);
+
             }
             case WAITING_FOR_DISEASE -> {
-                this.newPatient.setDisease(message);
+                this.newPatientDTO.setDisease(message);
                 this.responseMessage = "Please input one of the states [STABLE, HARD, CRITICAL] : ";
+                moveChatState(CHAT_ID);
             }
             case WAITING_FOR_PATIENT_STATE -> {
-                this.newPatient.setPatientState(PatientState.valueOf(message.toUpperCase()));
-                this.responseMessage = "Please input the chamber number in range [10-999] : ";
+                try {
+                    this.newPatientDTO.setPatientState(PatientState.valueOf(message.toUpperCase()));
+                    this.responseMessage = "Please input the chamber number in range [10-999] : ";
+                    moveChatState(CHAT_ID);
+                } catch (Exception e) {
+                    this.responseMessage = TelegramBotResponses.SYNTAX_ERROR.getDescription();
+                    responseOnState(chatState, update);
+                }
             }
             case WAITING_FOR_CHAMBER_NUMBER -> {
-                this.newPatient.setChamberNumber(Integer.parseInt(message));
-                this.responseMessage = "You may add some description(if not just print '-') : ";
+                try {
+                    this.newPatientDTO.setChamberNumber(Integer.parseInt(message));
+                    this.responseMessage = "You may add some description(if not just print '-') : ";
+                    moveChatState(CHAT_ID);
+                } catch (Exception e) {
+                    this.responseMessage = TelegramBotResponses.SYNTAX_ERROR.getDescription()
+                            .concat("Please input the chamber number in range [10-999] : ");
+                    responseOnState(chatState, update);
+                }
             }
             case WAITING_FOR_DESCRIPTION -> {
-                this.newPatient.setId(0);
-                this.newPatient.setDescription(message);
-                Patient optionalPatient = sendRequestForNewPatient();
-                if (optionalPatient != null) {
-                    this.responseMessage = "New patient to be created : " + optionalPatient.toString();
+                this.newPatientDTO.setDescription(message);
+                this.newPatientDTO.setToken(requestService.createPatientToken());
+                Optional<PatientDTO> optionalPatient = requestService.createNewPatient(newPatientDTO);
+                if (optionalPatient.isPresent()) {
+                    this.responseMessage = "New patient to be created : \n%s".formatted(newPatientDTO.toString());
                 } else {
                     this.responseMessage = "An error happened while validating a new patient!\n Unfortunately we can't save this patient";
                 }
-//                clearNewPatient();
-                newPatient = new Patient();
+                moveChatState(CHAT_ID);
+                newPatientDTO = new NewPatientDTO();
             }
             default -> {
-                chatState.setChatStates(ChatStates.DEFAULT);
-                chatState = chatStateRepository.save(chatState);
-                responseOnState(chatState, update);
+                Optional<ChatState> optionalChatState = requestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
+                if (optionalChatState.isPresent()) {
+                    responseOnState(chatState, update);
+                } else {
+                    this.responseMessage = TelegramBotResponses.SOME_ERROR.getDescription();
+                }
             }
         }
     }
 
-    // create ability to modify patient data by telegram bot buttons
-
-    private void clearNewPatient() {
-        this.newPatient = null;
-    }
-
-    private Patient sendRequestForNewPatient() {
-        PatientDTO patientDTO = PatientDTO.covertPatientToDTO(newPatient);
-        ResponseEntity<Patient> patientResponseEntity = restTemplate.postForEntity("http://localhost:8080/api/v1/patient", patientDTO, Patient.class, "");
-        return patientResponseEntity.getStatusCode().is2xxSuccessful() ?
-                patientResponseEntity.getBody() :
-                null;
+    @Override
+    public ChatState moveChatState(long chatID) {
+        return requestService.moveChatStateToNextState(chatID).get();
     }
 }

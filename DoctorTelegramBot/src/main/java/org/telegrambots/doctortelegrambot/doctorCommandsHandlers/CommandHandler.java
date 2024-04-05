@@ -1,15 +1,13 @@
 package org.telegrambots.doctortelegrambot.doctorCommandsHandlers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegrambots.doctortelegrambot.entities.ChatState;
+import org.telegrambots.doctortelegrambot.dto.AuthenticateDTO;
+import org.telegrambots.doctortelegrambot.dto.ChatStateDTO;
 import org.telegrambots.doctortelegrambot.entities.ChatStates;
-import org.telegrambots.doctortelegrambot.entities.Permission;
 import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
-import org.telegrambots.doctortelegrambot.repositories.ChatStateRepository;
-import org.telegrambots.doctortelegrambot.repositories.PermissionRepository;
+import org.telegrambots.doctortelegrambot.services.MainRequestService;
 
 import java.util.Map;
 import java.util.Optional;
@@ -19,19 +17,13 @@ public class CommandHandler {
 
     private final Map<String, Command> commands;
 
-    @Autowired
-    private ChatStateRepository chatStateRepository;
+    private final MainRequestService requestService;
 
-    @Autowired
-    private PermissionRepository permissionRepository;
+    private ChatStates chatState;
 
-    private long chatID = -1;
+    private long CHAT_ID = -1;
 
     private String message = "";
-
-    private String command = "";
-
-    private Command commandHandler = null;
 
 
     public CommandHandler(Map<String, Command> commands,
@@ -39,7 +31,9 @@ public class CommandHandler {
                           PatientsCommandHandler patientsCommandHandler,
                           ShiftCommandHandler shiftCommandHandler,
                           NewPatientCommandHandler newPatientCommandHandler,
-                          CancelCommandHandler cancelCommandHandler) {
+                          CancelCommandHandler cancelCommandHandler,
+                          MainRequestService mainRequestService) {
+        this.requestService = mainRequestService;
         this.commands = Map.of("/authenticate", authenticationCommandHandler,
                 "/patients", patientsCommandHandler,
                 "/patient", patientsCommandHandler,
@@ -49,37 +43,39 @@ public class CommandHandler {
     }
 
     public SendMessage handleCommands(Update update) {
-        if (update.hasMessage()) {
-            message = update.getMessage().getText();
-            command = message.split(" ")[0];
-            chatID = update.getMessage().getChatId();
-        } else if (update.hasCallbackQuery()) {
+        if (update.hasCallbackQuery()) {
+            CHAT_ID = update.getCallbackQuery().getMessage().getChatId();
             message = update.getCallbackQuery().getMessage().getText();
-            chatID = update.getCallbackQuery().getMessage().getChatId();
+        } else if (update.hasMessage()) {
+            CHAT_ID = update.getMessage().getChatId();
+            message = update.getMessage().getText();
         }
 
-        Optional<ChatState> optionalChatStateByChat = chatStateRepository.findChatStateByChatID(chatID);
-        Permission chat = permissionRepository.findByChatID(chatID);
-        commandHandler = commands.get(command);
-
-        if (allowResourceAccess(command, chat, optionalChatStateByChat.orElse(null))) {
-            if (commandHandler != null && allowResourceAccess(command, chat, optionalChatStateByChat.orElse(null))) {
-                return commandHandler.sendResponse(update);
-            } else if (optionalChatStateByChat.isPresent() && !optionalChatStateByChat.get().getChatStates().equals(ChatStates.DEFAULT)) {
-                commandHandler = commands.get(optionalChatStateByChat.get().getChatStates().getCommandReference());
-                return commandHandler.sendResponse(update);
-            } else {
-                return new SendMessage(String.valueOf(chatID), TelegramBotResponses.SYNTAX_ERROR.getDescription());
-            }
+        Optional<ChatStateDTO> optionalChatState = requestService.getChatState(CHAT_ID);
+        if (optionalChatState.isPresent()) {
+            chatState = ChatStates.valueOf(optionalChatState.get().getChatStates());
         } else {
-            return new SendMessage(String.valueOf(chatID), TelegramBotResponses.PERMISSION_DENIED_BECAUSE_OF_AUTHENTICATION.getDescription());
+            Optional<ChatStateDTO> newChatState = requestService.createChatState(CHAT_ID);
+            if (newChatState.isPresent()) {
+                chatState = ChatStates.valueOf(newChatState.get().getChatStates());
+            } else {
+                return new SendMessage(String.valueOf(CHAT_ID), TelegramBotResponses.SOME_ERROR.getDescription());
+            }
         }
-    }
 
-    private boolean allowResourceAccess(String resource, Permission permission, ChatState chatState) {
-        if (!resource.equals("/authenticate") && permission == null && chatState == null) return false;
-        if (!resource.equals("/authenticate") && permission == null && !chatState.getChatStates().equals(ChatStates.WAITING_FOR_TOKEN))
-            return false;
-        else return true;
+        Optional<AuthenticateDTO> authenticationStatus = requestService.getAuthenticationStatus(CHAT_ID);
+        if (authenticationStatus.isEmpty() && !chatState.equals(ChatStates.WAITING_FOR_TOKEN) && !message.equals("/authenticate")) {
+            return new SendMessage(String.valueOf(CHAT_ID), TelegramBotResponses.PERMISSION_DENIED_BECAUSE_OF_AUTHENTICATION.getDescription());
+        }
+
+        Command command = commands.get(message);
+        if (command != null) {
+            return command.sendResponse(update);
+        } else if (command == null && !chatState.equals(ChatStates.DEFAULT)) {
+            command = commands.get(chatState.getCommandReference());
+            return command.sendResponse(update);
+        } else {
+            return new SendMessage(String.valueOf(CHAT_ID), TelegramBotResponses.SOME_ERROR.getDescription());
+        }
     }
 }

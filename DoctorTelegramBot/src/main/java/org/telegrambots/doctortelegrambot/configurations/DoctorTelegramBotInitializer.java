@@ -1,4 +1,4 @@
-package org.telegrambots.doctortelegrambot.doctorBotConfigurations;
+package org.telegrambots.doctortelegrambot.configurations;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-import org.telegrambots.doctortelegrambot.contollers.DoctorTelegramBotController;
+import org.telegrambots.doctortelegrambot.controllers.DoctorTelegramBotController;
 
 @Component
 @RequiredArgsConstructor

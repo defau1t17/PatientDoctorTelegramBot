@@ -1,35 +1,28 @@
 package org.telegrambots.doctortelegrambot.doctorCommandsHandlers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegrambots.doctortelegrambot.dto.PaginatedPatientsResponse;
+import org.telegrambots.doctortelegrambot.dto.PaginatedPatientsDTO;
+import org.telegrambots.doctortelegrambot.dto.PatientDTO;
 import org.telegrambots.doctortelegrambot.entities.ChatState;
 import org.telegrambots.doctortelegrambot.entities.ChatStates;
-import org.telegrambots.doctortelegrambot.entities.Patient;
-import org.telegrambots.doctortelegrambot.exceptions.RestTemplateExceptionHandler;
-import org.telegrambots.doctortelegrambot.repositories.ChatStateRepository;
 import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
+import org.telegrambots.doctortelegrambot.services.PatientRequestService;
+
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class PatientsCommandHandler implements Command, StateUpdatable {
 
     private final SendMessage sendMessage = new SendMessage();
-    private final RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new RestTemplateExceptionHandler()).build();
+
+    private final PatientRequestService requestService;
 
     private final PatientsKeyboard patientsKeyboard;
-
-    private final ChatStateRepository chatStateRepository;
 
     private String responseMessage = "";
 
@@ -39,56 +32,28 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
     private int MAX_PAGE_NUMBER = 0;
 
     private final String PATIENT_MOVE_REFERENCE = "/patient";
-    private final String PATIENTS_MOVE_REFERENCE = "/patients";
 
-    private ChatState chatState = null;
-
-    private long chatID = -1;
+    private long CHAT_ID = -1;
 
     @Override
     public SendMessage sendResponse(Update update) {
-        triggerBlock(update);
-        sendMessage.setChatId(chatID);
+        if (update.hasMessage()) {
+            CHAT_ID = update.getMessage().getChatId();
+        } else if (update.hasCallbackQuery()) {
+            CHAT_ID = update.getCallbackQuery().getMessage().getChatId();
+        }
+
+        Optional<ChatState> optionalChatState = requestService.getChatState(CHAT_ID);
+
+        if (optionalChatState.isPresent()) {
+            responseOnState(optionalChatState.get(), update);
+        } else {
+            this.responseMessage = TelegramBotResponses.SOME_ERROR.getDescription();
+        }
+        sendMessage.setChatId(CHAT_ID);
         sendMessage.setText(responseMessage);
 
         return sendMessage;
-    }
-
-    private void triggerBlock(Update update) {
-        if (update.hasMessage()) {
-            chatID = update.getMessage().getChatId();
-        } else if (update.hasCallbackQuery()) {
-            chatID = update.getCallbackQuery().getMessage().getChatId();
-        }
-        chatState = chatStateRepository.findChatStateByChatID(chatID).get();
-        responseOnState(chatState, update);
-    }
-
-    private Patient getPatientByID(int id) {
-        ResponseEntity<Patient> optionalPatient = restTemplate.getForEntity("http://localhost:8080/api/v1/patient/{id}", Patient.class, id);
-        return optionalPatient.getStatusCode().is2xxSuccessful() ?
-                optionalPatient.getBody() :
-                null;
-    }
-
-    private List<Patient> getPatients() {
-        ResponseEntity<PaginatedPatientsResponse<Patient>> patients = restTemplate.exchange("http://localhost:8080/api/v1/patient?page={pageNumber}&size={pageSize}", HttpMethod.GET, null, new ParameterizedTypeReference<PaginatedPatientsResponse<Patient>>() {
-        }, Map.of("pageNumber", PAGE_NUMBER, "pageSize", PAGE_SIZE));
-        MAX_PAGE_NUMBER = Objects.requireNonNull(patients.getBody()).getTotalPages() - 1;
-        return patients.getBody().getContent();
-    }
-
-    private void setResponseMessageForPatient(Patient patient) {
-        this.responseMessage += "\nid : [%s]\nPatient : [%s %s]\nDisease : [%s]\nState : [%s]\nChamber : [%s]\nDescription : [%s]"
-                .formatted(patient.getId(), patient.getName(), patient.getSecondName(), patient.getDisease(), patient.getPatientState(), patient.getChamberNumber(), patient.getDescription());
-    }
-
-    private void setResponseMessageForPatients(List<Patient> patients) {
-        this.responseMessage = "";
-        patients.stream().forEach(patient -> {
-            this.responseMessage += "\nid : [%s]\nPatient : [%s %s]\nDisease : [%s]\nState : [%s]\nChamber : [%s]\nDescription : [%s]\n----------------------------------------------"
-                    .formatted(patient.getId(), patient.getName(), patient.getSecondName(), patient.getDisease(), patient.getPatientState(), patient.getChamberNumber(), patient.getDescription());
-        });
     }
 
     @Override
@@ -97,18 +62,25 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
             case DEFAULT -> {
                 if (update.getMessage().getText().equals(PATIENT_MOVE_REFERENCE)) {
                     this.responseMessage = "Please, enter ID of the patient below : ";
+                    requestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_PATIENT_ID);
                 } else {
-                    setResponseMessageForPatients(getPatients());
+                    PaginatedPatientsDTO paginatedPatients = requestService.getPaginatedPatients(PAGE_NUMBER, PAGE_SIZE);
+                    this.responseMessage = paginatedPatients.toString();
                     sendMessage.setReplyMarkup(patientsKeyboard.getPatientsKeyboard(PAGE_NUMBER, MAX_PAGE_NUMBER));
+                    requestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_PREVIOUS_OR_NEXT_COMMAND);
                 }
-                updateStateOnCommandOrState(update.getMessage().getText());
             }
             case WAITING_FOR_PATIENT_ID -> {
-                Patient patientByID = getPatientByID(Integer.parseInt(update.getMessage().getText()));
-                if (patientByID != null) {
-                    setResponseMessageForPatient(patientByID);
-                } else {
-                    this.responseMessage = TelegramBotResponses.PATIENT_NOT_FOUNT.getDescription();
+                try {
+                    long optionalPatientID = Long.parseLong(update.getMessage().getText());
+                    Optional<PatientDTO> patientByID = requestService.getPatientByID(optionalPatientID);
+                    if (patientByID.isPresent()) {
+                        this.responseMessage = patientByID.get().toString();
+                    } else this.responseMessage = TelegramBotResponses.PATIENT_NOT_FOUNT.getDescription();
+                    moveChatState(CHAT_ID);
+                } catch (Exception e) {
+                    this.responseMessage = TelegramBotResponses.SYNTAX_ERROR.getDescription();
+                    responseOnState(chatState, update);
                 }
             }
             case WAITING_FOR_PREVIOUS_OR_NEXT_COMMAND -> {
@@ -116,39 +88,41 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
                 switch (moveDirection) {
                     case "NEXT" -> {
                         PAGE_NUMBER++;
-                        setResponseMessageForPatients(getPatients());
+                        PaginatedPatientsDTO paginatedPatients = requestService.getPaginatedPatients(PAGE_NUMBER, PAGE_SIZE);
+                        MAX_PAGE_NUMBER = paginatedPatients
+                                .getTotalPages() - 1;
+                        this.responseMessage = paginatedPatients.toString();
                         sendMessage.setReplyMarkup(patientsKeyboard.getPatientsKeyboard(PAGE_NUMBER, MAX_PAGE_NUMBER));
                     }
                     case "BACK" -> {
                         PAGE_NUMBER--;
-                        setResponseMessageForPatients(getPatients());
+                        PaginatedPatientsDTO paginatedPatients = requestService.getPaginatedPatients(PAGE_NUMBER, PAGE_SIZE);
+                        MAX_PAGE_NUMBER = paginatedPatients
+                                .getTotalPages() - 1;
+                        this.responseMessage = paginatedPatients.toString();
                         sendMessage.setReplyMarkup(patientsKeyboard.getPatientsKeyboard(PAGE_NUMBER, MAX_PAGE_NUMBER));
                     }
                     case "STOP" -> {
-                        chatState.setChatStates(ChatStates.DEFAULT);
-                        chatStateRepository.save(chatState);
+                        requestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
                         sendMessage.setReplyMarkup(null);
-                        responseMessage = "Stopped";
+                        this.responseMessage = "Stopped";
                     }
                 }
             }
             default -> {
-                chatState.setChatStates(ChatStates.DEFAULT);
-                chatState = chatStateRepository.save(chatState);
-                responseOnState(chatState, update);
+                Optional<ChatState> optionalChatState = requestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
+                if (optionalChatState.isPresent()) {
+                    responseOnState(chatState, update);
+                } else {
+                    this.responseMessage = TelegramBotResponses.SOME_ERROR.getDescription();
+                }
             }
         }
     }
 
-    private void updateStateOnCommandOrState(String resource) {
-        if (chatState.getChatStates().equals(ChatStates.DEFAULT)) {
-            StateUpdatable.updateState(chatStateRepository, chatState, resource.equals(PATIENT_MOVE_REFERENCE) ?
-                    PATIENT_MOVE_REFERENCE :
-                    PATIENTS_MOVE_REFERENCE);
-        } else if (chatState.getChatStates().equals(ChatStates.WAITING_FOR_PATIENT_ID)) {
-            StateUpdatable.updateState(chatStateRepository, chatState, chatState.getChatStates().getCommandReference());
-        }
+    @Override
+    public ChatState moveChatState(long chatID) {
+        return requestService.moveChatStateToNextState(chatID).get();
     }
-
 
 }

@@ -1,30 +1,51 @@
 package org.telegrambots.doctortelegrambot.dto;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.telegrambots.doctortelegrambot.entities.Patient;
+import lombok.NoArgsConstructor;
 import org.telegrambots.doctortelegrambot.entities.PatientState;
-import org.telegrambots.doctortelegrambot.entities.Permission;
-import org.telegrambots.doctortelegrambot.repositories.PermissionRepository;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PatientDTO {
-    private String name;
-    private String secondName;
+    @JsonProperty
+    private long id;
+    @JsonProperty("disease")
     private String disease;
+    @JsonProperty("patientState")
     private PatientState patientState;
+    @JsonProperty("chamberNumber")
     private int chamberNumber;
+    @JsonProperty("description")
     private String description;
+    @JsonProperty("user")
+    private UserDTO user;
 
-
-    public Patient convertDTOToPatient() {
-        return new Patient(null, 1, this.name, this.secondName, this.disease, this.patientState, this.chamberNumber, this.description);
+    @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserDTO {
+        @JsonProperty("name")
+        private String name;
+        @JsonProperty("secondName")
+        private String secondName;
     }
 
-    public static PatientDTO covertPatientToDTO(Patient patient) {
-        return new PatientDTO(patient.getName(), patient.getSecondName(), patient.getDisease(), patient.getPatientState(), patient.getChamberNumber(), patient.getDescription());
+    @Override
+    public String toString() {
+        return "\nid : [%s]\nPatient : [%s %s]\nDisease : [%s]\nState : [%s]\nChamber : [%s]\nDescription : [%s]"
+                .formatted(
+                        this.id,
+                        this.user.name,
+                        this.user.secondName,
+                        this.disease,
+                        this.patientState,
+                        this.chamberNumber,
+                        this.description);
     }
-
 }
