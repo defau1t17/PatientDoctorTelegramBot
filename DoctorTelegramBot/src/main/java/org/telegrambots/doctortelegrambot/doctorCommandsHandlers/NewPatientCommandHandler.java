@@ -83,7 +83,6 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
                     this.responseMessage = "An error happened while validating a new patient!\n Unfortunately we can't save this patient";
                 }
 //                clearNewPatient();
-//                System.out.println(newPatient);
                 newPatient = new Patient();
             }
             default -> {

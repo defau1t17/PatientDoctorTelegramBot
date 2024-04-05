@@ -20,13 +20,11 @@ public class RabbitQueueConfiguration {
     }
 
     @Bean
-
     public Queue paramedicQueue() {
         return new Queue("paramedic");
     }
 
     @Bean
-
     public Queue doctorQueue() {
         return new Queue("doctor");
     }

@@ -39,7 +39,6 @@ public class PatientRestController {
 
     @PostMapping
     public ResponseEntity<?> createPatient(@RequestBody PatientDTO patientDTO) {
-        System.out.println(patientDTO);
         if (patientService.validatePatientBeforeSave(patientDTO.convertDTOToPatient())) {
             Patient patient = patientDTO.convertDTOToPatient();
             patient.setPersonalToken(Permission.tokenFabric(permissionRepository));
