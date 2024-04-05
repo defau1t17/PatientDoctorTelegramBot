@@ -50,12 +50,10 @@ public class CommandHandler {
 
     public SendMessage handleCommands(Update update) {
         if (update.hasMessage()) {
-            System.out.println("message");
             message = update.getMessage().getText();
             command = message.split(" ")[0];
             chatID = update.getMessage().getChatId();
         } else if (update.hasCallbackQuery()) {
-            System.out.println("callback");
             message = update.getCallbackQuery().getMessage().getText();
             chatID = update.getCallbackQuery().getMessage().getChatId();
         }

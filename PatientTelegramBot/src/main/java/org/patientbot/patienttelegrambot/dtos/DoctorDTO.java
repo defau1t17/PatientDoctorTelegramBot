@@ -2,10 +2,14 @@ package org.patientbot.patienttelegrambot.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class DoctorDTO {
     @JsonProperty("doctorPosition")
     String doctorPosition;
@@ -24,7 +28,9 @@ public class DoctorDTO {
 
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
-    static class UserDTO {
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserDTO {
         @JsonProperty("name")
         private String name;
         @JsonProperty("secondName")

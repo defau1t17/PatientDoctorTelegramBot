@@ -19,7 +19,6 @@ public class MainRequestService {
 
     public Optional<ChatStateDTO> getChatState(long chatID) {
         ResponseEntity<ChatStateDTO> optionalChatState = restTemplate.getForEntity("http://localhost:8082/chat/api/chatstate/%s" .formatted(chatID), ChatStateDTO.class);
-        System.out.println(optionalChatState.getStatusCode());
         return optionalChatState.getStatusCode().is2xxSuccessful() ?
                 Optional.of(optionalChatState.getBody()) :
                 Optional.empty();
