@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegrambots.doctortelegrambot.dto.NewPatientDTO;
 import org.telegrambots.doctortelegrambot.dto.PatientDTO;
 import org.telegrambots.doctortelegrambot.entities.*;
+import org.telegrambots.doctortelegrambot.services.ChatStateRequestService;
 import org.telegrambots.doctortelegrambot.services.PatientRequestService;
 
 import java.util.Optional;
@@ -19,6 +20,8 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
 
     private final PatientRequestService requestService;
 
+    private final ChatStateRequestService chatStateRequestService;
+
     private NewPatientDTO newPatientDTO = new NewPatientDTO();
 
     private String responseMessage = "";
@@ -29,7 +32,7 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
     @Override
     public SendMessage sendResponse(Update update) {
         CHAT_ID = update.getMessage().getChatId();
-        Optional<ChatState> chatState = requestService.getChatState(CHAT_ID);
+        Optional<ChatState> chatState = chatStateRequestService.getChatState(CHAT_ID);
         if (chatState.isPresent()) {
             responseOnState(chatState.get(), update);
         } else {
@@ -46,7 +49,7 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
         switch (chatState.getChatStates()) {
             case DEFAULT -> {
                 this.responseMessage = "Please write patient name below : ";
-                requestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_NAME);
+                chatStateRequestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_NAME);
             }
             case WAITING_FOR_NAME -> {
                 this.newPatientDTO.setName(message);
@@ -89,6 +92,7 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
                 this.newPatientDTO.setDescription(message);
                 this.newPatientDTO.setToken(requestService.createPatientToken());
                 Optional<PatientDTO> optionalPatient = requestService.createNewPatient(newPatientDTO);
+
                 if (optionalPatient.isPresent()) {
                     this.responseMessage = "New patient to be created : \n%s".formatted(newPatientDTO.toString());
                 } else {
@@ -98,7 +102,7 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
                 newPatientDTO = new NewPatientDTO();
             }
             default -> {
-                Optional<ChatState> optionalChatState = requestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
+                Optional<ChatState> optionalChatState = chatStateRequestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
                 if (optionalChatState.isPresent()) {
                     responseOnState(chatState, update);
                 } else {
@@ -110,6 +114,6 @@ public class NewPatientCommandHandler implements Command, StateUpdatable {
 
     @Override
     public ChatState moveChatState(long chatID) {
-        return requestService.moveChatStateToNextState(chatID).get();
+        return chatStateRequestService.moveChatStateToNextState(chatID).get();
     }
 }

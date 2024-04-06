@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegrambots.doctortelegrambot.entities.ChatState;
 import org.telegrambots.doctortelegrambot.entities.ChatStates;
 import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
-import org.telegrambots.doctortelegrambot.services.CancelRequestService;
+import org.telegrambots.doctortelegrambot.services.ChatStateRequestService;
 
 import java.util.Optional;
 
@@ -15,7 +15,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CancelCommandHandler implements Command {
 
-    private final CancelRequestService cancelRequestService;
+
+    private final ChatStateRequestService chatStateRequestService;
     private final SendMessage sendMessage = new SendMessage();
     private String responseMessage = "";
     private long CHAT_ID = 0;
@@ -24,13 +25,13 @@ public class CancelCommandHandler implements Command {
     public SendMessage sendResponse(Update update) {
         CHAT_ID = update.getMessage().getChatId();
 
-        Optional<ChatState> chatState = cancelRequestService.getChatState(CHAT_ID);
+        Optional<ChatState> chatState = chatStateRequestService.getChatState(CHAT_ID);
 
         if (chatState.isPresent()) {
             if (chatState.get().getChatStates().equals(ChatStates.DEFAULT))
                 this.responseMessage = "Nothing to cancel";
             else {
-                Optional<ChatState> optionalChatState = cancelRequestService.rollBackChatStateToDefault(CHAT_ID);
+                Optional<ChatState> optionalChatState = chatStateRequestService.rollBackChatStateToDefault(CHAT_ID);
                 if (optionalChatState.isPresent()) {
                     this.responseMessage = "Operation %s has canceled".formatted(chatState.get().getChatStates().getCommandReference());
                 } else {

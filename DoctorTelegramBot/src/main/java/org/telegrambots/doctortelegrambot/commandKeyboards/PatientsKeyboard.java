@@ -1,4 +1,4 @@
-package org.telegrambots.doctortelegrambot.doctorCommandsHandlers;
+package org.telegrambots.doctortelegrambot.commandKeyboards;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

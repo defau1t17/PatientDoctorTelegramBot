@@ -18,31 +18,8 @@ public class PatientRequestService {
 
     private final RestTemplate restTemplate;
 
-    public Optional<ChatState> getChatState(long chatID) {
-        ResponseEntity<ChatState> optionalChatState = restTemplate.getForEntity("http://localhost:8082/chat/api/chatstate/%s".formatted(chatID), ChatState.class);
-        return optionalChatState.getStatusCode().is2xxSuccessful() ?
-                Optional.of(optionalChatState.getBody()) :
-                Optional.empty();
-    }
-
-    public Optional<ChatState> updateChatState(long chatID, ChatStates chatStates) {
-        ResponseEntity<ChatState> optionalUpdateChatState = restTemplate.postForEntity("http://localhost:8082/chat/api/chatstate/%s/update?state=%s"
-                .formatted(chatID, chatStates.toString()), null, ChatState.class);
-        return optionalUpdateChatState.getStatusCode().is2xxSuccessful() ?
-                Optional.of(optionalUpdateChatState.getBody()) :
-                Optional.empty();
-    }
-
-    public Optional<ChatState> moveChatStateToNextState(Long chatID) {
-        ResponseEntity<ChatState> optionalUpdatedState = restTemplate.postForEntity("http://localhost:8082/chat/api/chatstate/%s/move?move=next"
-                .formatted(chatID), null, ChatState.class);
-        return optionalUpdatedState.getStatusCode().is2xxSuccessful() ?
-                Optional.of(optionalUpdatedState.getBody()) :
-                Optional.empty();
-    }
-
-    public Optional<org.telegrambots.doctortelegrambot.dto.PatientDTO> createNewPatient(NewPatientDTO newPatientDTO) {
-        ResponseEntity<org.telegrambots.doctortelegrambot.dto.PatientDTO> optionalNewPatient = restTemplate.postForEntity("http://localhost:8084/hospital/api/patients", newPatientDTO, org.telegrambots.doctortelegrambot.dto.PatientDTO.class);
+    public Optional<PatientDTO> createNewPatient(NewPatientDTO newPatientDTO) {
+        ResponseEntity<PatientDTO> optionalNewPatient = restTemplate.postForEntity("http://localhost:8084/hospital/api/patients", newPatientDTO, org.telegrambots.doctortelegrambot.dto.PatientDTO.class);
         return optionalNewPatient.getStatusCode().is2xxSuccessful() ?
                 Optional.of(optionalNewPatient.getBody()) :
                 Optional.empty();

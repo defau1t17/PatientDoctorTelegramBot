@@ -10,6 +10,7 @@ import org.telegrambots.doctortelegrambot.entities.ChatState;
 import org.telegrambots.doctortelegrambot.entities.ChatStates;
 import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
 import org.telegrambots.doctortelegrambot.services.AuthenticationRequestService;
+import org.telegrambots.doctortelegrambot.services.ChatStateRequestService;
 
 import java.util.Optional;
 
@@ -21,6 +22,8 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
 
     private final AuthenticationRequestService requestService;
 
+    private final ChatStateRequestService chatStateRequestService;
+
     private String responseMessage = "";
 
     private long CHAT_ID = 0;
@@ -29,7 +32,7 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
     @Override
     public SendMessage sendResponse(Update update) {
         CHAT_ID = update.getMessage().getChatId();
-        Optional<ChatState> chatState = requestService.getChatState(CHAT_ID);
+        Optional<ChatState> chatState = chatStateRequestService.getChatState(CHAT_ID);
 
         if (chatState.isPresent()) {
             responseOnState(chatState.get(), update);
@@ -44,10 +47,9 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
 
     @Override
     public void responseOnState(ChatState chatState, Update update) {
-        String text = update.getMessage().getText();
         switch (chatState.getChatStates()) {
             case DEFAULT -> {
-                Optional<ChatState> optionalUpdatedChatState = requestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_TOKEN);
+                Optional<ChatState> optionalUpdatedChatState = chatStateRequestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_TOKEN);
                 if (optionalUpdatedChatState.isPresent()) {
                     this.responseMessage = "Please, write your personal access token \n(Avoid '@,|,/,!,#,$,%,^,&,*,(,),{,},[,]' symbols)\n";
                 } else {
@@ -57,7 +59,7 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
             case WAITING_FOR_TOKEN -> {
                 String token = update.getMessage().getText();
                 Optional<AuthenticateDTO> optionalAuthenticate = requestService.authenticate(CHAT_ID, token);
-                Optional<AuthenticatedUserDTO> updateDTO = requestService.updateChatIDInHospitalDatabase(CHAT_ID, token);
+                Optional<AuthenticatedUserDTO> updateDTO = chatStateRequestService.updateChatIDInHospitalDatabase(CHAT_ID, token);
                 if (optionalAuthenticate.isPresent() && updateDTO.isPresent()) {
                     moveChatState(CHAT_ID);
                     responseMessage = "%s\nWelcome %s %s"
@@ -69,7 +71,7 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
                 }
             }
             default -> {
-                Optional<ChatState> optionalUpdatedChatState = requestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
+                Optional<ChatState> optionalUpdatedChatState = chatStateRequestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
                 if (optionalUpdatedChatState.isPresent()) {
                     responseOnState(chatState, update);
                 } else {
@@ -81,7 +83,7 @@ public class AuthenticationCommandHandler implements Command, StateUpdatable {
 
     @Override
     public ChatState moveChatState(long chatID) {
-        return requestService.moveChatStateToNextState(chatID).get();
+        return chatStateRequestService.moveChatStateToNextState(chatID).get();
     }
 
 }

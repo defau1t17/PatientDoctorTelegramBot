@@ -4,10 +4,11 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegrambots.doctortelegrambot.dto.AuthenticateDTO;
-import org.telegrambots.doctortelegrambot.dto.ChatStateDTO;
+import org.telegrambots.doctortelegrambot.entities.ChatState;
 import org.telegrambots.doctortelegrambot.entities.ChatStates;
 import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
-import org.telegrambots.doctortelegrambot.services.MainRequestService;
+import org.telegrambots.doctortelegrambot.services.AuthenticationRequestService;
+import org.telegrambots.doctortelegrambot.services.ChatStateRequestService;
 
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +18,9 @@ public class CommandHandler {
 
     private final Map<String, Command> commands;
 
-    private final MainRequestService requestService;
+    private final ChatStateRequestService chatStateRequestService;
+    private final AuthenticationRequestService authenticationRequestService;
+
 
     private ChatStates chatState;
 
@@ -32,8 +35,10 @@ public class CommandHandler {
                           ShiftCommandHandler shiftCommandHandler,
                           NewPatientCommandHandler newPatientCommandHandler,
                           CancelCommandHandler cancelCommandHandler,
-                          MainRequestService mainRequestService) {
-        this.requestService = mainRequestService;
+                          ChatStateRequestService chatStateRequestService,
+                          AuthenticationRequestService authenticationRequestService) {
+        this.chatStateRequestService = chatStateRequestService;
+        this.authenticationRequestService = authenticationRequestService;
         this.commands = Map.of("/authenticate", authenticationCommandHandler,
                 "/patients", patientsCommandHandler,
                 "/patient", patientsCommandHandler,
@@ -51,19 +56,19 @@ public class CommandHandler {
             message = update.getMessage().getText();
         }
 
-        Optional<ChatStateDTO> optionalChatState = requestService.getChatState(CHAT_ID);
+        Optional<ChatState> optionalChatState = chatStateRequestService.getChatState(CHAT_ID);
         if (optionalChatState.isPresent()) {
-            chatState = ChatStates.valueOf(optionalChatState.get().getChatStates());
+            chatState = optionalChatState.get().getChatStates();
         } else {
-            Optional<ChatStateDTO> newChatState = requestService.createChatState(CHAT_ID);
+            Optional<ChatState> newChatState = chatStateRequestService.createChatState(CHAT_ID);
             if (newChatState.isPresent()) {
-                chatState = ChatStates.valueOf(newChatState.get().getChatStates());
+                chatState = newChatState.get().getChatStates();
             } else {
                 return new SendMessage(String.valueOf(CHAT_ID), TelegramBotResponses.SOME_ERROR.getDescription());
             }
         }
 
-        Optional<AuthenticateDTO> authenticationStatus = requestService.getAuthenticationStatus(CHAT_ID);
+        Optional<AuthenticateDTO> authenticationStatus = authenticationRequestService.getAuthenticationStatus(CHAT_ID);
         if (authenticationStatus.isEmpty() && !chatState.equals(ChatStates.WAITING_FOR_TOKEN) && !message.equals("/authenticate")) {
             return new SendMessage(String.valueOf(CHAT_ID), TelegramBotResponses.PERMISSION_DENIED_BECAUSE_OF_AUTHENTICATION.getDescription());
         }

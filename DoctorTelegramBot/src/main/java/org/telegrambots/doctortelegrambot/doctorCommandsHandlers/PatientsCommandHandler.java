@@ -4,14 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegrambots.doctortelegrambot.commandKeyboards.PatientsKeyboard;
 import org.telegrambots.doctortelegrambot.dto.PaginatedPatientsDTO;
 import org.telegrambots.doctortelegrambot.dto.PatientDTO;
 import org.telegrambots.doctortelegrambot.entities.ChatState;
 import org.telegrambots.doctortelegrambot.entities.ChatStates;
 import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
+import org.telegrambots.doctortelegrambot.services.ChatStateRequestService;
 import org.telegrambots.doctortelegrambot.services.PatientRequestService;
 
-import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -23,6 +24,8 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
     private final PatientRequestService requestService;
 
     private final PatientsKeyboard patientsKeyboard;
+
+    private final ChatStateRequestService chatStateRequestService;
 
     private String responseMessage = "";
 
@@ -43,7 +46,7 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
             CHAT_ID = update.getCallbackQuery().getMessage().getChatId();
         }
 
-        Optional<ChatState> optionalChatState = requestService.getChatState(CHAT_ID);
+        Optional<ChatState> optionalChatState = chatStateRequestService.getChatState(CHAT_ID);
 
         if (optionalChatState.isPresent()) {
             responseOnState(optionalChatState.get(), update);
@@ -62,12 +65,12 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
             case DEFAULT -> {
                 if (update.getMessage().getText().equals(PATIENT_MOVE_REFERENCE)) {
                     this.responseMessage = "Please, enter ID of the patient below : ";
-                    requestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_PATIENT_ID);
+                    chatStateRequestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_PATIENT_ID);
                 } else {
                     PaginatedPatientsDTO paginatedPatients = requestService.getPaginatedPatients(PAGE_NUMBER, PAGE_SIZE);
                     this.responseMessage = paginatedPatients.toString();
                     sendMessage.setReplyMarkup(patientsKeyboard.getPatientsKeyboard(PAGE_NUMBER, MAX_PAGE_NUMBER));
-                    requestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_PREVIOUS_OR_NEXT_COMMAND);
+                    chatStateRequestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOR_PREVIOUS_OR_NEXT_COMMAND);
                 }
             }
             case WAITING_FOR_PATIENT_ID -> {
@@ -103,14 +106,14 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
                         sendMessage.setReplyMarkup(patientsKeyboard.getPatientsKeyboard(PAGE_NUMBER, MAX_PAGE_NUMBER));
                     }
                     case "STOP" -> {
-                        requestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
+                        chatStateRequestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
                         sendMessage.setReplyMarkup(null);
                         this.responseMessage = "Stopped";
                     }
                 }
             }
             default -> {
-                Optional<ChatState> optionalChatState = requestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
+                Optional<ChatState> optionalChatState = chatStateRequestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
                 if (optionalChatState.isPresent()) {
                     responseOnState(chatState, update);
                 } else {
@@ -122,7 +125,7 @@ public class PatientsCommandHandler implements Command, StateUpdatable {
 
     @Override
     public ChatState moveChatState(long chatID) {
-        return requestService.moveChatStateToNextState(chatID).get();
+        return chatStateRequestService.moveChatStateToNextState(chatID).get();
     }
 
 }
