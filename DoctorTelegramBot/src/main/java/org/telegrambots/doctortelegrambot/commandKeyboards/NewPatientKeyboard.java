@@ -1,15 +1,17 @@
 package org.telegrambots.doctortelegrambot.commandKeyboards;
 
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NewClientKeyboard {
+@Component
+public class NewPatientKeyboard {
 
 
-    public InlineKeyboardMarkup getKeyboardOnVerificationState(int page, int maxPage) {
+    public InlineKeyboardMarkup getApproveKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
         List<InlineKeyboardButton> keyboardButtonsRow2 = new ArrayList<>();
@@ -38,12 +40,6 @@ public class NewClientKeyboard {
         keyboardButtonsRow2.add(inlineKeyboardButton);
 
         inlineKeyboardButton = new InlineKeyboardButton();
-        inlineKeyboardButton.setText("EDIT STATE");
-        inlineKeyboardButton.setCallbackData("EDIT_STATE");
-        keyboardButtonsRow2.add(inlineKeyboardButton);
-
-
-        inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText("EDIT CHAMBER");
         inlineKeyboardButton.setCallbackData("EDIT_CHAMBER");
         keyboardButtonsRow2.add(inlineKeyboardButton);
@@ -56,7 +52,12 @@ public class NewClientKeyboard {
         inlineKeyboardButton = new InlineKeyboardButton();
         inlineKeyboardButton.setText("SAVE");
         inlineKeyboardButton.setCallbackData("SAVE");
-        keyboardButtonsRow2.add(inlineKeyboardButton);
+        keyboardButtonsRow3.add(inlineKeyboardButton);
+
+        inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setText("CLEAR");
+        inlineKeyboardButton.setCallbackData("CLEAR");
+        keyboardButtonsRow3.add(inlineKeyboardButton);
 
         List<List<InlineKeyboardButton>> rowList = new ArrayList<>();
         rowList.add(keyboardButtonsRow);
@@ -66,7 +67,7 @@ public class NewClientKeyboard {
         return inlineKeyboardMarkup;
     }
 
-    public InlineKeyboardMarkup getStatesKeyboard(int page, int maxPage) {
+    public InlineKeyboardMarkup getStatesKeyboard() {
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<InlineKeyboardButton> keyboardButtonsRow = new ArrayList<>();
 
@@ -92,8 +93,6 @@ public class NewClientKeyboard {
         inlineKeyboardMarkup.setKeyboard(rowList);
         return inlineKeyboardMarkup;
     }
-
-
 
 
 }
