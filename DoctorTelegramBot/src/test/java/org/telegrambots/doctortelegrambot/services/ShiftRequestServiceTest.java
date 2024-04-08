@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.telegrambots.doctortelegrambot.dto.DoctorDTO;
+import org.telegrambots.doctortelegrambot.dto.UserDTO;
 
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ class ShiftRequestServiceTest {
 
     @BeforeEach
     void setUp() {
-        doctorDTO = new DoctorDTO("test", 1, "test", "OPENED", 1, 0, spy(DoctorDTO.UserDTO.class));
+        doctorDTO = new DoctorDTO("test", 1, "test", "OPENED", 1, 0, spy(UserDTO.class));
         shiftRequestServiceUnderTest = new ShiftRequestService(mockRestTemplate);
     }
 

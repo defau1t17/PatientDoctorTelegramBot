@@ -9,6 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegrambots.doctortelegrambot.configurations.DoctorTelegramBotConfiguration;
 import org.telegrambots.doctortelegrambot.doctorCommandsHandlers.CommandHandler;
+import org.telegrambots.doctortelegrambot.dto.EmergencyDTO;
 
 @Component
 @RequiredArgsConstructor
@@ -38,7 +39,8 @@ public class DoctorTelegramBotController extends TelegramLongPollingBot {
     }
 
 
-    public void sendMessageToDoctor() throws TelegramApiException {
-        Message execute = execute(new SendMessage());
+    public void sendMessageToDoctor(EmergencyDTO emergencyDTO) throws TelegramApiException {
+        execute(new SendMessage(String.valueOf(emergencyDTO.getChatID()), "Patient from chamber '%s' is requesting immediate assistance"
+                .formatted(emergencyDTO.getChamberNumber())));
     }
 }

@@ -26,28 +26,12 @@ public class DoctorDTO {
     @JsonProperty("user")
     private UserDTO user;
 
-    @Data
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class UserDTO {
-        @JsonProperty("id")
-        private int id;
-        @JsonProperty("chatID")
-        private long chatID;
-        @JsonProperty("name")
-        private String name;
-        @JsonProperty("secondName")
-        private String secondName;
-    }
-
-
     @Override
     public String toString() {
         return "\nid: [%s]\nname: [%s]\nsecond name: [%s]\nposition: [%s]\nshift: [%s]\nshift status: [%s]\nworkroom: [%s]"
                 .formatted(this.id,
-                        this.user.name,
-                        this.user.secondName,
+                        this.user.getName(),
+                        this.user.getSecondName(),
                         this.doctorPosition.toString(),
                         this.doctorShift.toString(),
                         this.shiftStatus.toString(),

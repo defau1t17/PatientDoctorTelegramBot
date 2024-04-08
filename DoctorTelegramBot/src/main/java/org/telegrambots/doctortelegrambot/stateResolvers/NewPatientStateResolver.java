@@ -65,7 +65,6 @@ public class NewPatientStateResolver implements ChatStateMovable {
                     sendMessage.setReplyMarkup(null);
                 } catch (Exception e) {
                     this.responseMessage = TelegramBotResponses.SYNTAX_ERROR.getDescription();
-                    responseOnState(chatState, update);
                 }
             }
             case WAITING_FOR_CHAMBER_NUMBER -> {
@@ -80,7 +79,6 @@ public class NewPatientStateResolver implements ChatStateMovable {
                 } catch (Exception e) {
                     this.responseMessage = TelegramBotResponses.SYNTAX_ERROR.getDescription()
                             .concat("Please input the chamber number in range [10-999] : ");
-                    responseOnState(chatState, update);
                 }
             }
             case WAITING_FOR_DESCRIPTION -> {
@@ -107,7 +105,6 @@ public class NewPatientStateResolver implements ChatStateMovable {
                     this.newPatientDTO.setPatientState(PatientState.valueOf(update.getCallbackQuery().getData()));
                     updateKeyboardAndResponseMessageAfterUpdate();
                 } catch (Exception e) {
-                    chatStateRequestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOF_STATE_UPDATE);
                     this.responseMessage = "Please select new patient state : ";
                     sendMessage.setReplyMarkup(newPatientKeyboard.getStatesKeyboard());
                 }
@@ -121,7 +118,6 @@ public class NewPatientStateResolver implements ChatStateMovable {
                         updateKeyboardAndResponseMessageAfterUpdate();
                     }
                 } catch (Exception e) {
-                    chatStateRequestService.updateChatState(CHAT_ID, ChatStates.WAITING_FOF_CHAMBER_UPDATE);
                     this.responseMessage = "The number you wrote is incorrect!\nPlease input new chamber number in range [10-999] : ";
                 }
             }
@@ -178,7 +174,6 @@ public class NewPatientStateResolver implements ChatStateMovable {
                         this.responseMessage = "New patient successfully removed";
                         chatStateRequestService.rollBackChatStateToDefault(CHAT_ID);
                         sendMessage.setReplyMarkup(null);
-                        chatStateRequestService.rollBackChatStateToDefault(CHAT_ID);
                     }
                 }
             }

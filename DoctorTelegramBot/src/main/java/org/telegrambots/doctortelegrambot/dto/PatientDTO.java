@@ -25,24 +25,13 @@ public class PatientDTO {
     @JsonProperty("user")
     private UserDTO user;
 
-    @Data
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class UserDTO {
-        @JsonProperty("name")
-        private String name;
-        @JsonProperty("secondName")
-        private String secondName;
-    }
-
     @Override
     public String toString() {
         return "\nid : [%s]\nPatient : [%s %s]\nDisease : [%s]\nState : [%s]\nChamber : [%s]\nDescription : [%s]"
                 .formatted(
                         this.id,
-                        this.user.name,
-                        this.user.secondName,
+                        this.user.getName(),
+                        this.user.getSecondName(),
                         this.disease,
                         this.patientState,
                         this.chamberNumber,

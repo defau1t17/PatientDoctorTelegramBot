@@ -68,7 +68,6 @@ public class PatientStateResolver implements ChatStateMovable {
                     moveChatState(CHAT_ID);
                 } catch (Exception e) {
                     this.responseMessage = TelegramBotResponses.SYNTAX_ERROR.getDescription();
-                    responseOnState(chatState, update);
                 }
             }
             case WAITING_FOR_PREVIOUS_OR_NEXT_COMMAND -> {
@@ -93,7 +92,7 @@ public class PatientStateResolver implements ChatStateMovable {
                     case "STOP" -> {
                         chatStateRequestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
                         sendMessage.setReplyMarkup(null);
-                        this.responseMessage = "Stopped";
+                        this.responseMessage = "The operation is suspended. \nIf you would like to learn about patients in the hospital, press --> '/patients'";
                     }
                 }
             }

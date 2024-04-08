@@ -44,19 +44,17 @@ public class AuthenticationStateResolver implements ChatStateMovable {
             case WAITING_FOR_TOKEN -> {
                 String token = update.getMessage().getText();
                 Optional<AuthenticateDTO> optionalAuthenticate = requestService.authenticate(CHAT_ID, token);
-                Optional<AuthenticatedUserDTO> updateDTO = chatStateRequestService.updateChatIDInHospitalDatabase(CHAT_ID, token);
-                if (optionalAuthenticate.isPresent() && updateDTO.isPresent()) {
+                if (optionalAuthenticate.isPresent()) {
                     moveChatState(CHAT_ID);
+                    Optional<AuthenticatedUserDTO> updateDTO = chatStateRequestService.updateChatIDInHospitalDatabase(CHAT_ID, token);
                     responseMessage = "%s\nWelcome %s %s"
                             .formatted(TelegramBotResponses.AUTH_PASSED.getDescription(), updateDTO.get().getName(), updateDTO.get().getSecondName());
                 } else if (optionalAuthenticate.isEmpty()) {
                     responseMessage = TelegramBotResponses.BAD_CREDS.getDescription();
-                } else {
-                    responseMessage = TelegramBotResponses.SYNTAX_ERROR.getDescription();
                 }
             }
             default -> {
-                Optional<ChatState> optionalUpdatedChatState = chatStateRequestService.updateChatState(CHAT_ID, ChatStates.DEFAULT);
+                Optional<ChatState> optionalUpdatedChatState = chatStateRequestService.moveChatStateToNextState(CHAT_ID);
                 if (optionalUpdatedChatState.isPresent()) {
                     responseOnState(chatState, update);
                 } else {
