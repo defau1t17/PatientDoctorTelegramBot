@@ -8,16 +8,15 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegrambots.doctortelegrambot.controllers.DoctorTelegramBotController;
 import org.telegrambots.doctortelegrambot.dto.EmergencyDTO;
 
-@Component
 @EnableRabbit
+@Component
 @RequiredArgsConstructor
-public class NurseConsumer {
+public class ParamedicConsumer {
 
     private final DoctorTelegramBotController controller;
 
-
-    @RabbitListener(queues = "nurse")
-    public void sendMessageToNurse(EmergencyDTO emergencyDTO) throws TelegramApiException {
+    @RabbitListener(queues = "paramedic")
+    public void doctorConsumer(EmergencyDTO emergencyDTO) throws TelegramApiException {
         controller.sendMessageToDoctor(emergencyDTO);
     }
 }

@@ -1,6 +1,5 @@
 package org.telegrambots.doctortelegrambot.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,10 +9,11 @@ import org.telegrambots.doctortelegrambot.entities.PatientState;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class PatientDTO {
-    @JsonProperty
-    private long id;
+public class NewPatientDTO {
+    @JsonProperty("name")
+    private String name;
+    @JsonProperty("secondName")
+    private String secondName;
     @JsonProperty("disease")
     private String disease;
     @JsonProperty("patientState")
@@ -22,19 +22,22 @@ public class PatientDTO {
     private int chamberNumber;
     @JsonProperty("description")
     private String description;
-    @JsonProperty("user")
-    private UserDTO user;
+    @JsonProperty("token")
+    private String token;
+
 
     @Override
     public String toString() {
-        return "\nid : [%s]\nPatient : [%s %s]\nDisease : [%s]\nState : [%s]\nChamber : [%s]\nDescription : [%s]"
+        return "\nName: [%s]\nSecond name: [%s]\nDisease: [%s]\nState: [%s]\nChamber: [%s]\nDescription: [%s]\nToken: [%s]"
                 .formatted(
-                        this.id,
-                        this.user.getName(),
-                        this.user.getSecondName(),
+                        this.name,
+                        this.secondName,
                         this.disease,
                         this.patientState,
                         this.chamberNumber,
-                        this.description);
+                        this.description,
+                        this.token
+                );
     }
+
 }

@@ -1,45 +1,38 @@
 package org.telegrambots.doctortelegrambot.doctorCommandsHandlers;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.http.HttpStatus;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegrambots.doctortelegrambot.entities.Doctor;
-import org.telegrambots.doctortelegrambot.exceptions.RestTemplateExceptionHandler;
+import org.telegrambots.doctortelegrambot.dto.DoctorDTO;
+import org.telegrambots.doctortelegrambot.entities.TelegramBotResponses;
+import org.telegrambots.doctortelegrambot.services.ShiftRequestService;
 
-import static org.springframework.http.HttpStatus.*;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class ShiftCommandHandler implements Command {
     private final SendMessage sendMessage = new SendMessage();
 
-    private final RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new RestTemplateExceptionHandler()).build();
-
+    private final ShiftRequestService requestService;
     private String responseMessage = "";
+
+    private long CHAT_ID = 0;
 
     @Override
     public SendMessage sendResponse(Update update) {
-        sendMessage.setChatId(update.getMessage().getChatId());
-        Doctor doctorShiftUpdate = shiftManipulation(update.getMessage().getChatId());
-        if (doctorShiftUpdate != null)
-            responseMessage = "Your shift was %s successfully".formatted(doctorShiftUpdate.getShiftStatus().toString());
-        else responseMessage = "Error happened while executing. We are working about it";
+        CHAT_ID = update.getMessage().getChatId();
+
+        Optional<DoctorDTO> doctorDTO = requestService.changeDoctorShiftStatus(CHAT_ID);
+        if (doctorDTO.isPresent()) {
+            this.responseMessage = "Your shift was %s successfully".formatted(doctorDTO.get().getShiftStatus().toString());
+        } else {
+            this.responseMessage = TelegramBotResponses.SOME_ERROR.getDescription();
+        }
+        sendMessage.setChatId(CHAT_ID);
         sendMessage.setText(responseMessage);
         return sendMessage;
-    }
-
-    private Doctor shiftManipulation(long chatID) {
-        ResponseEntity<Doctor> shiftStatusUpdate = restTemplate.postForEntity("http://localhost:8080/api/v1/doctor/shift?chatID={id}", new Doctor(), Doctor.class, chatID);
-        return shiftStatusUpdate.getStatusCode().is2xxSuccessful() ?
-                shiftStatusUpdate.getBody() :
-                null;
     }
 
 
