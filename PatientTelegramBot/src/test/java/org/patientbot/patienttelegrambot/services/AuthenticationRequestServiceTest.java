@@ -34,62 +34,6 @@ class AuthenticationRequestServiceTest {
         authenticationRequestServiceUnderTest = new AuthenticationRequestService(mockRestTemplate);
     }
 
-    @Test
-    void testGetChatState() {
-        ChatStateDTO spy = spy(ChatStateDTO.class);
-        when(mockRestTemplate.getForEntity(anyString(), any()))
-                .thenReturn(new ResponseEntity<>(spy, HttpStatus.OK));
-        final Optional<ChatStateDTO> result = authenticationRequestServiceUnderTest.getChatState(0L);
-        assertTrue(result.isPresent());
-        assertEquals(spy, result.get());
-    }
-
-    @Test
-    void testGetChatStateNotFound() {
-        when(mockRestTemplate.getForEntity(anyString(), any()))
-                .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        final Optional<ChatStateDTO> result = authenticationRequestServiceUnderTest.getChatState(0L);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testMoveChatStateToNextState() {
-        ChatStateDTO main = new ChatStateDTO(ChatStates.WAITING_FOR_DOCTOR_ID.name(), 12L);
-        ChatStateDTO fake = new ChatStateDTO(ChatStates.DEFAULT.name(), 12L);
-
-        when(mockRestTemplate.postForEntity(anyString(), any(), any()))
-                .thenReturn(new ResponseEntity<>(fake, HttpStatus.OK));
-        final Optional<ChatStateDTO> result = authenticationRequestServiceUnderTest.moveChatStateToNextState(0L);
-        assertTrue(result.isPresent());
-        assertNotEquals(main, result.get());
-    }
-
-    @Test
-    void testMoveChatStateToNextStateNotFound() {
-        when(mockRestTemplate.postForEntity(anyString(), any(), any()))
-                .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        final Optional<ChatStateDTO> result = authenticationRequestServiceUnderTest.moveChatStateToNextState(0L);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testUpdateChatState() {
-        ChatStateDTO main = new ChatStateDTO(ChatStates.WAITING_FOR_PREVIOUS_OR_NEXT_COMMAND_DOCTORS.name(), 0L);
-        ChatStateDTO fake = new ChatStateDTO(ChatStates.DEFAULT.name(), 0L);
-        when(mockRestTemplate.postForEntity(anyString(), any(), any()))
-                .thenReturn(new ResponseEntity<>(fake, HttpStatus.OK));
-        final Optional<ChatStateDTO> result = authenticationRequestServiceUnderTest.updateChatState(0L, ChatStates.DEFAULT);
-        assertTrue(result.isPresent());
-        assertNotEquals(main, result.get());
-    }
-
-    @Test
-    void testUpdateChatState_RestTemplateThrowsRestClientException() {
-        when(mockRestTemplate.postForEntity(anyString(), any(), any()))
-                .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        final Optional<ChatStateDTO> result = authenticationRequestServiceUnderTest.updateChatState(0L, ChatStates.DEFAULT);
-        assertTrue(result.isEmpty());
-    }
 
     @Test
     void testAuthenticate() {
@@ -110,23 +54,21 @@ class AuthenticationRequestServiceTest {
     }
 
     @Test
-    void testUpdateChatIDInHospitalDatabase() {
-        AuthenticatedUserDTO spy = spy(AuthenticatedUserDTO.class);
-        when(mockRestTemplate.exchange(anyString(), eq(HttpMethod.PATCH), any(), eq(AuthenticatedUserDTO.class)))
-                .thenReturn(new ResponseEntity<>(spy, HttpStatus.OK));
-        final Optional<AuthenticatedUserDTO> result = authenticationRequestServiceUnderTest.updateChatIDInHospitalDatabase(
-                0L, "token");
+    void getAuthenticationStatusSuccess() {
+        AuthenticateDTO authenticateDTO = spy(AuthenticateDTO.class);
+        when(mockRestTemplate.getForEntity(anyString(), any()))
+                .thenReturn(new ResponseEntity<>(authenticateDTO, HttpStatus.OK));
+
+        final Optional<AuthenticateDTO> result = authenticationRequestServiceUnderTest.getAuthenticationStatus(0L);
         assertTrue(result.isPresent());
-        assertEquals(spy, result.get());
+        assertEquals(result.get(), authenticateDTO);
     }
 
     @Test
-    void testUpdateChatIDInHospitalDatabase_RestTemplateThrowsRestClientException() {
-        when(mockRestTemplate.exchange(anyString(), eq(HttpMethod.PATCH), any(), eq(AuthenticatedUserDTO.class)
-        ))
+    void getAuthenticationStatusFailure() {
+        when(mockRestTemplate.getForEntity(anyString(), any()))
                 .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
-
-        final Optional<AuthenticatedUserDTO> result = authenticationRequestServiceUnderTest.updateChatIDInHospitalDatabase(0L, "token");
+        final Optional<AuthenticateDTO> result = authenticationRequestServiceUnderTest.getAuthenticationStatus(0L);
         assertTrue(result.isEmpty());
     }
 

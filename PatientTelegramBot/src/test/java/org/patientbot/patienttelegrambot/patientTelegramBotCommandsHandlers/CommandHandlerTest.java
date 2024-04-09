@@ -7,9 +7,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.patientbot.patienttelegrambot.dtos.AuthenticateDTO;
 import org.patientbot.patienttelegrambot.dtos.ChatStateDTO;
+import org.patientbot.patienttelegrambot.entity.ChatState;
 import org.patientbot.patienttelegrambot.entity.ChatStates;
 import org.patientbot.patienttelegrambot.entity.TelegramBotResponses;
-import org.patientbot.patienttelegrambot.services.MainRequestService;
+import org.patientbot.patienttelegrambot.services.AuthenticationRequestService;
+import org.patientbot.patienttelegrambot.services.ChatStateRequestService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Chat;
@@ -30,26 +32,31 @@ class CommandHandlerTest {
     @Mock
     private DoctorCommandHandler mockDoctorCommandHandler;
     @Mock
-    private MainRequestService mockRequestService;
-    @Mock
     private EmergencyCommandHandler mockEmergencyCommandHandler;
+
+    @Mock
+    private ChatStateRequestService stateRequestService;
+
+    @Mock
+    private AuthenticationRequestService authenticationRequestService;
 
     private CommandHandler commandHandlerUnderTest;
 
     private Update update;
 
-    private ChatStateDTO chatStateDTO;
+    private ChatState chatState;
 
     @BeforeEach
     void setUp() {
         update = new Update();
         commandHandlerUnderTest = new CommandHandler(mockAuthenticationCommandHandler, mockDoctorCommandHandler,
-                mockRequestService, mockEmergencyCommandHandler);
+                mockEmergencyCommandHandler, stateRequestService, authenticationRequestService);
+
+        chatState = new ChatState(1L);
     }
 
     @Test
     void testSendResponseCommandNotFound() {
-        chatStateDTO = new ChatStateDTO(ChatStates.DEFAULT.name(), 1L);
         Message message = new Message();
         message.setChat(new Chat(1L, "Long"));
         message.setText("some command that not exists");
@@ -57,8 +64,9 @@ class CommandHandlerTest {
 
         AuthenticateDTO authenticateDTO = new AuthenticateDTO(1L, "some-token");
 
-        when(mockRequestService.getChatState(anyLong())).thenReturn(Optional.of(chatStateDTO));
-        when(mockRequestService.getAuthenticationStatus(anyLong())).thenReturn(Optional.of(authenticateDTO));
+
+        when(stateRequestService.getChatState(anyLong())).thenReturn(Optional.of(chatState));
+        when(authenticationRequestService.getAuthenticationStatus(anyLong())).thenReturn(Optional.of(authenticateDTO));
 
         SendMessage result = commandHandlerUnderTest.sendResponse(update);
 
@@ -68,14 +76,13 @@ class CommandHandlerTest {
 
     @Test
     void testSendResponsePermissionDenied() {
-        chatStateDTO = new ChatStateDTO(ChatStates.DEFAULT.name(), 1L);
         Message message = new Message();
         message.setChat(new Chat(1L, "Long"));
         message.setText("some command that not exists");
         update.setMessage(message);
 
-        when(mockRequestService.getChatState(anyLong())).thenReturn(Optional.of(chatStateDTO));
-        when(mockRequestService.getAuthenticationStatus(anyLong())).thenReturn(Optional.empty());
+        when(stateRequestService.getChatState(anyLong())).thenReturn(Optional.of(chatState));
+        when(authenticationRequestService.getAuthenticationStatus(anyLong())).thenReturn(Optional.empty());
 
         SendMessage result = commandHandlerUnderTest.sendResponse(update);
 

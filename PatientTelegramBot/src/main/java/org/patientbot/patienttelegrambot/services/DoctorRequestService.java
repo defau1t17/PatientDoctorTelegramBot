@@ -22,23 +22,6 @@ public class DoctorRequestService {
 
     private final RestTemplate restTemplate;
 
-    public Optional<ChatStateDTO> getChatState(Long chatID) {
-        ResponseEntity<ChatStateDTO> optionalChatState = restTemplate.getForEntity("http://localhost:8082/chat/api/chatstate/%s"
-                .formatted(chatID), ChatStateDTO.class);
-        return optionalChatState.getStatusCode().is2xxSuccessful() ?
-                Optional.of(optionalChatState.getBody()) :
-                Optional.empty();
-    }
-
-
-    public Optional<ChatStateDTO> updateChatState(Long chatID, ChatStates chatStates) {
-        ResponseEntity<ChatStateDTO> optionalChatStateUpdate = restTemplate.postForEntity("http://localhost:8082/chat/api/chatstate/%s/update?state=%s"
-                .formatted(chatID, chatStates.toString()), null, ChatStateDTO.class);
-        return optionalChatStateUpdate.getStatusCode().is2xxSuccessful() ?
-                Optional.of(optionalChatStateUpdate.getBody()) :
-                Optional.empty();
-    }
-
     public Optional<PagebleDoctorDTO> getDoctors(int pageNumber, int pageSize) {
         ResponseEntity<PagebleDoctorDTO> allDoctors = restTemplate.getForEntity("http://localhost:8084/hospital/api/doctors?pageNumber=%s&pageSize=%s"
                 .formatted(pageNumber, pageSize), PagebleDoctorDTO.class);
@@ -54,13 +37,4 @@ public class DoctorRequestService {
                 Optional.of(optionalDoctor.getBody()) :
                 Optional.empty();
     }
-
-    public Optional<ChatStateDTO> moveChatStateToNextState(Long chatID) {
-        ResponseEntity<ChatStateDTO> optionalUpdatedState = restTemplate.postForEntity("http://localhost:8082/chat/api/chatstate/%s/move?move=next"
-                .formatted(chatID), null, ChatStateDTO.class);
-        return optionalUpdatedState.getStatusCode().is2xxSuccessful() ?
-                Optional.of(optionalUpdatedState.getBody()) :
-                Optional.empty();
-    }
-
 }

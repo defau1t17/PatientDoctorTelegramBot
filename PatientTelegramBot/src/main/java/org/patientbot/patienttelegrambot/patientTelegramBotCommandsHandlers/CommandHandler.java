@@ -1,10 +1,11 @@
 package org.patientbot.patienttelegrambot.patientTelegramBotCommandsHandlers;
 
 import org.patientbot.patienttelegrambot.dtos.AuthenticateDTO;
-import org.patientbot.patienttelegrambot.dtos.ChatStateDTO;
+import org.patientbot.patienttelegrambot.entity.ChatState;
 import org.patientbot.patienttelegrambot.entity.ChatStates;
 import org.patientbot.patienttelegrambot.entity.TelegramBotResponses;
-import org.patientbot.patienttelegrambot.services.MainRequestService;
+import org.patientbot.patienttelegrambot.services.AuthenticationRequestService;
+import org.patientbot.patienttelegrambot.services.ChatStateRequestService;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -23,14 +24,18 @@ public class CommandHandler implements Command {
 
     private ChatStates chatState;
 
-    private final MainRequestService requestService;
+    private final ChatStateRequestService chatStateRequestService;
+
+    private final AuthenticationRequestService authenticationRequestService;
 
 
     public CommandHandler(AuthenticationCommandHandler authenticationCommandHandler,
                           DoctorCommandHandler doctorCommandHandler,
-                          MainRequestService requestService,
-                          EmergencyCommandHandler emergencyCommandHandler) {
-        this.requestService = requestService;
+                          EmergencyCommandHandler emergencyCommandHandler,
+                          ChatStateRequestService chatStateRequestService,
+                          AuthenticationRequestService authenticationRequestService) {
+        this.chatStateRequestService = chatStateRequestService;
+        this.authenticationRequestService = authenticationRequestService;
         commandMap = Map.of(
                 "/authenticate", authenticationCommandHandler,
                 "/doctors", doctorCommandHandler,
@@ -49,19 +54,19 @@ public class CommandHandler implements Command {
             message = update.getMessage().getText();
         }
 
-        Optional<ChatStateDTO> optionalChatState = requestService.getChatState(CHAT_ID);
+        Optional<ChatState> optionalChatState = chatStateRequestService.getChatState(CHAT_ID);
         if (optionalChatState.isPresent()) {
-            chatState = ChatStates.valueOf(optionalChatState.get().getChatStates());
+            chatState = optionalChatState.get().getChatStates();
         } else {
-            Optional<ChatStateDTO> newChatState = requestService.createChatState(CHAT_ID);
+            Optional<ChatState> newChatState = chatStateRequestService.createChatState(CHAT_ID);
             if (newChatState.isPresent()) {
-                chatState = ChatStates.valueOf(newChatState.get().getChatStates());
+                chatState = newChatState.get().getChatStates();
             } else {
                 return new SendMessage(String.valueOf(CHAT_ID), TelegramBotResponses.SOME_ERROR.getDescription());
             }
         }
 
-        Optional<AuthenticateDTO> authenticationStatus = requestService.getAuthenticationStatus(CHAT_ID);
+        Optional<AuthenticateDTO> authenticationStatus = authenticationRequestService.getAuthenticationStatus(CHAT_ID);
         if (authenticationStatus.isEmpty() && !chatState.equals(ChatStates.WAITING_FOR_TOKEN) && !message.equals("/authenticate")) {
             return new SendMessage(String.valueOf(CHAT_ID), TelegramBotResponses.PERMISSION_DENIED_BECAUSE_OF_AUTHENTICATION.getDescription());
         }
