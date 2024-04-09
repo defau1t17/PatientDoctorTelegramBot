@@ -5,6 +5,7 @@ import org.hospital.hospitalservice.entities.Patient;
 import org.hospital.hospitalservice.entities.PatientState;
 import org.hospital.hospitalservice.repositories.PatientRepository;
 import org.hospital.hospitalservice.repositories.UserRepository;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class PatientService extends ServiceDAO<Patient, Long> {
 
     private final UserRepository userRepository;
 
+    @CachePut(value = "patientByID")
     @Override
     @Transactional(readOnly = true)
     public Page<Patient> findAll(int pageNumber, int pageSize) {
@@ -58,12 +60,14 @@ public class PatientService extends ServiceDAO<Patient, Long> {
         repository.deleteById(id);
     }
 
+    @CachePut(value = "patientByChatID", key = "T(Object)", unless = "#result == null")
     @Override
     @Transactional(readOnly = true)
     public Optional<Patient> findByChatID(Long chatID) {
         return repository.findPatientByChatID(chatID);
     }
 
+    @CachePut(value = "patientByID", key = "T(Object)", unless = "#result == null")
     @Override
     @Transactional(readOnly = true)
     public Optional<Patient> findByID(Long id) {

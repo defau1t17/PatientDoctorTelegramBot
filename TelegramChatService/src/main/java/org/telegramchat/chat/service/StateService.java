@@ -1,6 +1,8 @@
 package org.telegramchat.chat.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegramchat.chat.entity.ChatStates;
@@ -18,12 +20,14 @@ public class StateService extends ServiceDAO<ChatState, Integer> {
 
     private final ChatStateRepository repository;
 
+    @CachePut(value = "pageWithChatStates")
     @Override
     @Transactional(readOnly = true)
     public Page<ChatState> findAll(int pageNumber, int pageSize) {
         return repository.findAll(PageRequest.of(pageNumber, pageSize));
     }
 
+    @CachePut(value = "chatStateByChatID", key = "T(Object)")
     @Transactional(readOnly = true)
     @Override
     public Optional<ChatState> findByChatID(Long chatID) {

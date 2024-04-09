@@ -22,7 +22,6 @@ public class PatientEndpoint {
 
     private final UserService userService;
 
-//    @Cacheable(value = "patientByID")
     @GetMapping("/{id}")
     public ResponseEntity<?> getPatientByID(@PathVariable(value = "id") long id) {
         Optional<Patient> optionalPatient = patientService.findByID(id);
@@ -33,8 +32,6 @@ public class PatientEndpoint {
                         .status(HttpStatus.NOT_FOUND)
                         .build();
     }
-
-//    @Cacheable(value = "patientByChatID")
     @GetMapping("/chat/{chatID}")
     public ResponseEntity<?> getPatientByChatID(@PathVariable(value = "chatID") long chatID) {
         Optional<Patient> optionalPatient = patientService.findByChatID(chatID);
@@ -46,7 +43,6 @@ public class PatientEndpoint {
                         .build();
     }
 
-//    @Cacheable(value = "pageWithPatients")
     @GetMapping
     public ResponseEntity<?> getPatients(@RequestParam(value = "page") Optional<Integer> page, @RequestParam(value = "size") Optional<Integer> size) {
         return ResponseEntity

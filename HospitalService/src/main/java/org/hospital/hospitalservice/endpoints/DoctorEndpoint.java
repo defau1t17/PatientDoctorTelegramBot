@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.hospital.hospitalservice.dtos.DoctorDTO;
 import org.hospital.hospitalservice.entities.Doctor;
 import org.hospital.hospitalservice.entities.User;
-import org.hospital.hospitalservice.repositories.DoctorRepository;
 import org.hospital.hospitalservice.services.DoctorService;
 import org.hospital.hospitalservice.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -23,9 +22,6 @@ public class DoctorEndpoint {
 
     private final UserService userService;
 
-    private final DoctorRepository doctorRepository;
-
-    //    @Cacheable(value = "pageWithDoctors")
     @GetMapping
     public ResponseEntity<?> getAllDoctors(@RequestParam(value = "pageNumber") Optional<Integer> pageNumber,
                                            @RequestParam(value = "pageSize") Optional<Integer> pageSize) {
@@ -33,7 +29,6 @@ public class DoctorEndpoint {
                 .ok(doctorService.findAll(pageNumber.orElse(0), pageSize.orElse(5)));
     }
 
-    //    @Cacheable(value = "doctorByID")
     @GetMapping("/{id}")
     public ResponseEntity<?> getDoctorByID(@PathVariable(value = "id") long id) {
         Optional<Doctor> optionalDoctor = doctorService.findByID(id);
@@ -47,7 +42,7 @@ public class DoctorEndpoint {
 
     @GetMapping("/patient/{id}")
     public ResponseEntity<?> getAllDoctorsByPatient(@PathVariable(value = "id") long id) {
-        Optional<List<Doctor>> allByPatientID = doctorRepository.findAllByPatientID(id);
+        Optional<List<Doctor>> allByPatientID = doctorService.findAllDoctorsByPatientID(id);
         return allByPatientID.isPresent() ?
                 ResponseEntity
                         .ok(allByPatientID.get()) :
@@ -56,7 +51,6 @@ public class DoctorEndpoint {
                         .build();
     }
 
-    //    @Cacheable(value = "doctorByChatID")
     @GetMapping("/chat/{chatID}")
     public ResponseEntity<?> findDoctorByChatID(@PathVariable(value = "chatID") long chatID) {
         Optional<Doctor> optionalDoctor = doctorService.findByChatID(chatID);
@@ -90,7 +84,7 @@ public class DoctorEndpoint {
                         .build();
     }
 
-//    @CachePut(value = "doctor", key = "shiftStatus")
+    //    @CachePut(value = "doctor", key = "shiftStatus")
     @PostMapping("/{chatID}/shift")
     public ResponseEntity<?> updateDoctorShift(@PathVariable(value = "chatID") long chatID) {
         Optional<Doctor> optionalDoctor = doctorService.findByChatID(chatID);

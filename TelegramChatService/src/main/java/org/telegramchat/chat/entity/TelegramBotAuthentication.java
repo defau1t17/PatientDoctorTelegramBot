@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.telegramchat.chat.repository.TelegramBotAuthenticationRepository;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
 @Data
 @AllArgsConstructor
-public final class TelegramBotAuthentication {
+public final class TelegramBotAuthentication implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,7 @@
 package org.telegramchat.chat.endpoints;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,8 @@ import org.telegramchat.chat.service.StateService;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static java.util.Arrays.*;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chatstate")
@@ -18,7 +21,6 @@ public class ChatStateEndpoint {
 
     private final StateService stateService;
 
-    //    @Cacheable(value = "pageWithChatStates")
     @GetMapping
     public ResponseEntity<?> findAllChatStates(@RequestParam(value = "pageNumber") Optional<Integer> pageNumber,
                                                @RequestParam(value = "pageSize") Optional<Integer> pageSize) {
@@ -26,7 +28,6 @@ public class ChatStateEndpoint {
                 .ok(stateService.findAll(pageNumber.orElse(0), pageSize.orElse(5)));
     }
 
-    //    @Cacheable("chatStateByChatID")
     @GetMapping("/{chatID}")
     public ResponseEntity<?> findChatStateByChatID(@PathVariable(value = "chatID") long chatID) {
         Optional<ChatState> chatStateOptional = stateService.findByChatID(chatID);
@@ -38,7 +39,6 @@ public class ChatStateEndpoint {
                     .build();
         }
     }
-
 
     @PostMapping
     public ResponseEntity<?> createNewChatState(@RequestParam(value = "chatID") long chatID) {
@@ -53,9 +53,10 @@ public class ChatStateEndpoint {
 
     @PostMapping("/{chatID}/update")
     public ResponseEntity<?> updateChatState(@PathVariable("chatID") long chatID, @RequestParam(value = "state") ChatStates chatStates) {
-        return stateService.findByChatID(chatID).isPresent() && Arrays.asList(ChatStates.values()).contains(chatStates) ?
+        Optional<ChatState> optionalChatState = stateService.findByChatID(chatID);
+        return optionalChatState.isPresent() && asList(ChatStates.values()).contains(chatStates) ?
                 ResponseEntity
-                        .ok(stateService.update(stateService.findByChatID(chatID).get().updateChatState(chatStates))) :
+                        .ok(stateService.update(optionalChatState.get().updateChatState(chatStates))) :
                 ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .build();
@@ -63,9 +64,10 @@ public class ChatStateEndpoint {
 
     @PostMapping("/{chatID}/move")
     public ResponseEntity<?> moveChatState(@PathVariable(value = "chatID") long chatID, @RequestParam(value = "move") String move) {
-        return stateService.findByChatID(chatID).isPresent() ?
+        Optional<ChatState> optionalChatState = stateService.findByChatID(chatID);
+        return optionalChatState.isPresent() ?
                 ResponseEntity
-                        .ok(stateService.moveState(stateService.findByChatID(chatID).get(), move)) :
+                        .ok(stateService.moveState(optionalChatState.get(), move)) :
                 ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
                         .build();

@@ -1,6 +1,8 @@
 package org.telegramchat.chat.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegramchat.chat.entity.TelegramBotAuthentication;
 import org.telegramchat.chat.repository.TelegramBotAuthenticationRepository;
@@ -16,12 +18,14 @@ public class AuthenticationService extends ServiceDAO<TelegramBotAuthentication,
 
     private final TelegramBotAuthenticationRepository repository;
 
+    @CachePut(value = "pageWithAuthentication")
     @Transactional(readOnly = true)
     @Override
     public Page<TelegramBotAuthentication> findAll(int pageNumber, int pageSize) {
         return repository.findAll(PageRequest.of(pageNumber, pageSize));
     }
 
+    @CachePut(value = "authenticationByChatID", key = "T(Object)", unless = "#result == null")
     @Override
     @Transactional(readOnly = true)
     public Optional<TelegramBotAuthentication> findByChatID(Long chatID) {
