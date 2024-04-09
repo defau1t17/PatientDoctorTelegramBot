@@ -21,30 +21,6 @@ public class AuthenticationRequestService {
 
     private final RestTemplate restTemplate;
 
-    public Optional<ChatStateDTO> getChatState(Long chatID) {
-        ResponseEntity<ChatStateDTO> optionalChatState = restTemplate.getForEntity("http://localhost:8082/chat/api/chatstate/%s"
-                .formatted(chatID), ChatStateDTO.class);
-        return optionalChatState.getStatusCode().is2xxSuccessful() ?
-                Optional.of(optionalChatState.getBody()) :
-                Optional.empty();
-    }
-
-    public Optional<ChatStateDTO> moveChatStateToNextState(Long chatID) {
-        ResponseEntity<ChatStateDTO> optionalUpdatedState = restTemplate.postForEntity("http://localhost:8082/chat/api/chatstate/%s/move?move=next"
-                .formatted(chatID), null, ChatStateDTO.class);
-        return optionalUpdatedState.getStatusCode().is2xxSuccessful() ?
-                Optional.of(optionalUpdatedState.getBody()) :
-                Optional.empty();
-    }
-
-    public Optional<ChatStateDTO> updateChatState(Long chatID, ChatStates chatStates) {
-        ResponseEntity<ChatStateDTO> optionalChatStateUpdate = restTemplate.postForEntity("http://localhost:8082/chat/api/chatstate/%s/update?state=%s"
-                .formatted(chatID, chatStates.toString()), null, ChatStateDTO.class);
-        return optionalChatStateUpdate.getStatusCode().is2xxSuccessful() ?
-                Optional.of(optionalChatStateUpdate.getBody()) :
-                Optional.empty();
-    }
-
     public Optional<AuthenticateDTO> authenticate(Long chatID, String token) {
         ResponseEntity<AuthenticateDTO> optionalAuthentication = restTemplate.exchange("http://localhost:8082/chat/api/authenticate?chatID=%s&token=%s"
                 .formatted(chatID, token), HttpMethod.PATCH, null, AuthenticateDTO.class);
@@ -53,12 +29,10 @@ public class AuthenticationRequestService {
                 Optional.empty();
     }
 
-
-    public Optional<AuthenticatedUserDTO> updateChatIDInHospitalDatabase(long chatID, String token) {
-        ResponseEntity<AuthenticatedUserDTO> optionalUpdate = restTemplate.exchange("http://localhost:8084/hospital/api/patients?chatID=%s&token=%s"
-                .formatted(chatID, token), HttpMethod.PATCH, null, AuthenticatedUserDTO.class);
-        return optionalUpdate.getStatusCode().is2xxSuccessful() ?
-                Optional.of(optionalUpdate.getBody()) :
+    public Optional<AuthenticateDTO> getAuthenticationStatus(long chatID) {
+        ResponseEntity<AuthenticateDTO> optionalAuthenticationStatus = restTemplate.getForEntity("http://localhost:8082/chat/api/authenticate/%s".formatted(chatID), AuthenticateDTO.class);
+        return optionalAuthenticationStatus.getStatusCode().is2xxSuccessful() ?
+                Optional.of(optionalAuthenticationStatus.getBody()) :
                 Optional.empty();
     }
 
