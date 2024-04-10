@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.hospital</groupId>
     <artifactId>HospitalService</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
     <name>HospitalService</name>
     <description>HospitalService</description>
     <properties>

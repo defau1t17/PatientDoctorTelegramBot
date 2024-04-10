@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.telegrambots</groupId>
     <artifactId>DoctorTelegramBot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
     <name>DoctorTelegramBot</name>
     <description>DoctorTelegramBot</description>
     <properties>

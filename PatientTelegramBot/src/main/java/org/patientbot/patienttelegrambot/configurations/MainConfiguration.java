@@ -4,6 +4,7 @@ import org.patientbot.patienttelegrambot.exception.RestTemplateExceptionHandler;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
@@ -14,5 +15,10 @@ public class MainConfiguration {
         return new RestTemplateBuilder()
                 .errorHandler(new RestTemplateExceptionHandler())
                 .build();
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 }

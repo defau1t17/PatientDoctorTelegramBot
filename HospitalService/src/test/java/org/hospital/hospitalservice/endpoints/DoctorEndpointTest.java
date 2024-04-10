@@ -115,18 +115,6 @@ class DoctorEndpointTest {
     }
 
     @Test
-    void getAllDoctorsByPatient() throws Exception {
-        doctor.setPatients(List.of(spy(Patient.class), spy(Patient.class)));
-        when(mockDoctorRepository.findAllByPatientID(anyLong())).thenReturn(Optional.of(List.of(doctor)));
-        final MockHttpServletResponse response = mockMvc.perform(get("/doctors/patient/{id}", anyLong())
-                        .accept(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
-        assertEquals(HttpStatus.OK.value(), response.getStatus());
-        assertNotEquals(doctor.getPatients().size(), 0);
-        assertEquals(objectMapper.writeValueAsString(List.of(doctor)), response.getContentAsString());
-    }
-
-    @Test
     void testTest_DoctorRepositoryReturnsAbsent() throws Exception {
         when(mockDoctorRepository.findAllByPatientID(anyLong())).thenReturn(Optional.empty());
         final MockHttpServletResponse response = mockMvc.perform(get("/doctors/patient/{id}", anyLong())

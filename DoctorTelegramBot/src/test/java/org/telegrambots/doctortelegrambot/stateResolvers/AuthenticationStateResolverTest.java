@@ -112,7 +112,6 @@ class AuthenticationStateResolverTest {
 
 
         when(mockRequestService.authenticate(anyLong(), anyString())).thenReturn(Optional.empty());
-        when(mockChatStateRequestService.updateChatIDInHospitalDatabase(anyLong(), anyString())).thenReturn(Optional.empty());
 
         final SendMessage result = authenticationStateResolverUnderTest.responseOnState(chatState, update);
 

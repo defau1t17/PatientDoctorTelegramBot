@@ -58,17 +58,6 @@ public class ChatStateEndpointTest {
     }
 
 
-    private static PostgreSQLContainer postgres = new PostgreSQLContainer("postgres:latest");
-
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
-
-
     @Test
     void findAllChatStates_Success() throws Exception {
         Page<ChatState> expectedPage = new PageImpl<>(List.of(spy(ChatState.class)), PageRequest.of(pageNumber, pageSize), 1L);
