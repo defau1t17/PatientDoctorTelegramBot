@@ -1,0 +1,16 @@
+FROM maven:3-openjdk-17-slim AS BUILD
+
+WORKDIR /chatService
+COPY TelegramChatService/ .
+
+RUN mvn clean  package
+
+#-------------------------------
+FROM openjdk:17 AS DEPLOY
+
+ENV serviceName="chatservice.jar"
+WORKDIR /deployment
+COPY --from=BUILD /chatService/target/TelegramChatService-SNAPSHOT.jar $serviceName
+EXPOSE 8082
+
+ENTRYPOINT java -jar $serviceName

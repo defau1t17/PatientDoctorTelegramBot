@@ -5,7 +5,6 @@ import org.emergency.emergency.dto.DoctorDTO;
 import org.emergency.emergency.dto.EmergencyDTO;
 import org.emergency.emergency.dto.PatientDTO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PatientStateResolverService {
 
-    @Autowired
     private final RabbitTemplate rabbitTemplate;
 
 
