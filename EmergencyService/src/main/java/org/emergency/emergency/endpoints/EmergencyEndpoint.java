@@ -1,5 +1,11 @@
 package org.emergency.emergency.endpoints;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.emergency.emergency.dto.DoctorDTO;
 import org.emergency.emergency.dto.PatientDTO;
@@ -11,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "Emergency Endpoint", description = "Request emergency help")
 @RestController
 @RequestMapping("/help")
 @RequiredArgsConstructor
@@ -20,6 +27,11 @@ public class EmergencyEndpoint {
 
     private final PatientStateResolverService resolverService;
 
+    @Operation(summary = "Request for emergency help", parameters = @Parameter(name = "chatID", example = "131231"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404")
+    })
     @PostMapping
     public ResponseEntity<?> getHelp(@RequestParam long chatID) {
         Optional<PatientDTO> patientByChatID = requestService.getPatientByChatID(chatID);
