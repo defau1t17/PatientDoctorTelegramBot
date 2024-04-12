@@ -13,7 +13,10 @@ RUN echo \
         apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 WORKDIR /usr/share/jenkins/ref/init.groovy.d/
-COPY /configuration_as_code/*.groovy  .
+COPY /scripts/*.groovy  .
+
+WORKDIR /var/jenkins_home
+COPY jenkins_jobs jobs
 
 ENV JAVA_OPTS -Djava.awt.headless=true -Djenkins.install.runSetupWizard=false
 
