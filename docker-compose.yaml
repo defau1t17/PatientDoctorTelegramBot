@@ -143,4 +143,15 @@ services:
       - .env
       - .env.override
 
+  jenkins:
+    image: jenkins-server:latest
+    container_name: jenkins-server
+    build:
+      context: .
+      dockerfile: Dockerfile.jenkins
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "80:8080"
 
