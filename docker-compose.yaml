@@ -47,10 +47,9 @@ services:
     env_file:
       - .env
 
-
   chat_setvice:
     container_name: chat_service
-    image: chat_service:latest
+    image: chatservice:latest
     build:
       dockerfile: Dockerfile.chatservice
       context: .
@@ -72,7 +71,7 @@ services:
 
   emergency_service:
     container_name: emergency_service
-    image: emergency:latest
+    image: emergencyservice:latest
     build:
       dockerfile: Dockerfile.emergencyservice
       context: .
@@ -91,7 +90,7 @@ services:
 
   hospital_service:
     container_name: hospital_service
-    image: hospital_service:latest
+    image: hospitalservice:latest
     build:
       dockerfile: Dockerfile.hostpitalservice
       context: .
@@ -125,7 +124,6 @@ services:
     env_file:
       - .env
       - .env.override
-
 
   doctor_bot:
     container_name: "${DOCTOR_TELEGRAM_BOT_CONTAINER_NAME}"
