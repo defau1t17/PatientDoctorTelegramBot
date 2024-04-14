@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chat-service-configmap
+  namespace: application
+data:
+  CHAT_DATABASE_USERNAME: "chatuser"
+  CHAT_DATABASE_PASSWORD: "chatpassword"
+  CHAT_DATABASE_NAME: "chatdatabase"
+  CHAT_DATABASE_PORT: "5432"
+  CHAT_DB_CONTAINER_NAME: "chat-database-service"
+  REDIS_HOST_NAME: "redis-database-service"
