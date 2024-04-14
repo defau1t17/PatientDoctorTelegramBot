@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospital-service-deployment
+  namespace: application
+  labels:
+    app: hospital-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hospital-service
+  template:
+    metadata:
+      name: hospital-service
+      labels:
+        app: hospital-service
+    spec:
+      containers:
+        - name: hospital-service
+          image: ghcr.io/defau1t17/hospitalservice:latest
+          ports:
+            - containerPort: 8084
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: hospital-service-configmap
+      restartPolicy: Always
+      

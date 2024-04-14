@@ -48,7 +48,7 @@ services:
       - .env
 
   chat_setvice:
-    container_name: chat_service
+    container_name: chatservice
     image: chatservice:latest
     build:
       dockerfile: Dockerfile.chatservice
@@ -70,7 +70,7 @@ services:
       - .env
 
   emergency_service:
-    container_name: emergency_service
+    container_name: emergencyservice
     image: emergencyservice:latest
     build:
       dockerfile: Dockerfile.emergencyservice
@@ -85,14 +85,15 @@ services:
       - RABBITMQ_PASS=${RABBITMQ_PASS}
       - RABBITMQ_HOST=${RABBITMQ_CONTAINER_NAME}
       - RABBITMQ_PORT=${RABBIT_MQ_DEFAULT_PORT}
+#      - HOSPITAL_SERVICE_ADDRESS=${HOSPITAL_SERVICE_ADDRESS}
     env_file:
       - .env
 
   hospital_service:
-    container_name: hospital_service
+    container_name: hospitalservice
     image: hospitalservice:latest
     build:
-      dockerfile: Dockerfile.hostpitalservice
+      dockerfile: Dockerfile.hospitalservice
       context: .
     ports:
       - "${HOSPITAL_SERVICE_HOST_PORT}:${HOSPITAL_SERVICE_CONTAINER_PORT}"
@@ -121,9 +122,11 @@ services:
       - "${PATIENT_TELEGRAM_BOT_HOST_PORT}:${PATIENT_TELEGRAM_BOT_CONTAINER_PORT}"
     environment:
       - PATIENT_TOKEN=${PATIENT_TOKEN}
+      - CHAT_SERVICE_ADDRESS=${CHAT_SERVICE_ADDRESS}
+      - HOSPITAL_SERVICE_ADDRESS=${HOSPITAL_SERVICE_ADDRESS}
+      - EMERGENCY_SERVICE_ADDRESS=${EMERGENCY_SERVICE_ADDRESS}
     env_file:
       - .env
-      - .env.override
 
   doctor_bot:
     container_name: "${DOCTOR_TELEGRAM_BOT_CONTAINER_NAME}"
@@ -139,9 +142,10 @@ services:
       - RABBITMQ_HOST=${RABBITMQ_CONTAINER_NAME}
       - RABBITMQ_PORT=${RABBIT_MQ_DEFAULT_PORT}
       - DOCTOR_TOKEN=${DOCTOR_TOKEN}
+      - CHAT_SERVICE_ADDRESS=${CHAT_SERVICE_ADDRESS}
+      - HOSPITAL_SERVICE_ADDRESS=${HOSPITAL_SERVICE_ADDRESS}
     env_file:
       - .env
-      - .env.override
 
   jenkins:
     image: jenkins-server:latest
