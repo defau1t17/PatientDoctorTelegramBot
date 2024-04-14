@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: patient-telegram-bot-config-map
+  namespace: application
+  labels:
+    app: patient-bot
+data:
+  PATIENT_TOKEN: "token"
+  
