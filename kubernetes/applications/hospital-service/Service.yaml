@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: application
+  name: hospitalservice
+spec:
+  selector:
+    app: hospital-service
+  ports:
+    - port: 8082
+  type: LoadBalancer
+
+  

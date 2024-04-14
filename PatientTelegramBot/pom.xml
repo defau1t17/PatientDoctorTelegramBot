@@ -10,7 +10,7 @@
     </parent>
     <groupId>org.patientbot</groupId>
     <artifactId>PatientTelegramBot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
     <name>PatientTelegramBot</name>
     <description>PatientTelegramBot</description>
     <properties>
@@ -63,6 +63,13 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <systemPropertyVariables>
+                        <propertyName>PATIENT_TOKEN</propertyName>
+                        <value>7127878671:AAEel18CU1J0nouPPYEpqV6DsKz9klRJKMA</value>
+                    </systemPropertyVariables>
+<!--                    <environmentVariables>-->
+<!--                        <PATIENT_TOKEN></PATIENT_TOKEN>-->
+<!--                    </environmentVariables>-->
                 </configuration>
             </plugin>
         </plugins>

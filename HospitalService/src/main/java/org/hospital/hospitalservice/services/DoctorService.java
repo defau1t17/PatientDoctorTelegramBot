@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.hospital.hospitalservice.entities.*;
 import org.hospital.hospitalservice.repositories.DoctorRepository;
 import org.hospital.hospitalservice.repositories.UserRepository;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +24,7 @@ public class DoctorService extends ServiceDAO<Doctor, Long> {
 
     private final UserRepository userRepository;
 
+    @CachePut(value = "pageWithDoctors")
     @Override
     @Transactional(readOnly = true)
     public Page<Doctor> findAll(int pageNumber, int pageSize) {
@@ -30,7 +33,6 @@ public class DoctorService extends ServiceDAO<Doctor, Long> {
 
     @Override
     @Transactional
-
     public Doctor create(Doctor entity) {
         userRepository.save(entity.getUser());
         return repository.save(entity);
@@ -38,7 +40,6 @@ public class DoctorService extends ServiceDAO<Doctor, Long> {
 
     @Override
     @Transactional
-
     public Doctor update(Doctor entity) {
         return repository.save(entity);
     }
@@ -64,19 +65,27 @@ public class DoctorService extends ServiceDAO<Doctor, Long> {
         repository.deleteById(id);
     }
 
+    @CachePut(value = "doctorByChatID", key = "T(Object)", unless = "#result == null")
     @Override
     @Transactional(readOnly = true)
-
     public Optional<Doctor> findByChatID(Long chatID) {
         return repository.findDoctorByChatID(chatID);
     }
 
+    @CachePut(value = "doctorByID", key = "T(Object)", unless = "#result == null")
     @Override
     @Transactional(readOnly = true)
-
     public Optional<Doctor> findByID(Long id) {
         return repository.findById(id);
     }
+
+
+    @CachePut(value = "doctorsByPatientID", key = "T(Object)", unless = "#result == null")
+    @Transactional(readOnly = true)
+    public Optional<List<Doctor>> findAllDoctorsByPatientID(long patientID) {
+        return repository.findAllByPatientID(patientID);
+    }
+
 
     @Override
     public boolean validateBeforeSave(Doctor entity) {

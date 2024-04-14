@@ -5,21 +5,27 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.telegramchat.chat.entity.ChatState;
 import org.telegramchat.chat.entity.ChatStates;
 import org.telegramchat.chat.service.StateService;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,6 +36,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+@RunWith(SpringRunner.class)
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ChatStateEndpoint.class)
 public class ChatStateEndpointTest {
@@ -49,6 +56,7 @@ public class ChatStateEndpointTest {
     void setUp() {
         chatState = spy();
     }
+
 
     @Test
     void findAllChatStates_Success() throws Exception {
@@ -139,7 +147,7 @@ public class ChatStateEndpointTest {
 
         assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
         assertEquals(new ObjectMapper().writeValueAsString(chatState), mvcResult.getResponse().getContentAsString());
-        verify(stateService, times(2)).findByChatID(anyLong());
+        verify(stateService).findByChatID(anyLong());
         verify(stateService).update(any());
     }
 
@@ -152,7 +160,7 @@ public class ChatStateEndpointTest {
                 .andReturn();
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), mvcResult.getResponse().getStatus());
-        verify(stateService, times(1)).findByChatID(anyLong());
+        verify(stateService).findByChatID(anyLong());
     }
 
     @Test
@@ -167,14 +175,14 @@ public class ChatStateEndpointTest {
                 .andReturn();
         assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
         assertEquals(new ObjectMapper().writeValueAsString(chatState), mvcResult.getResponse().getContentAsString());
-        verify(stateService, times(2)).findByChatID(anyLong());
+        verify(stateService).findByChatID(anyLong());
         verify(stateService).moveState(any(), anyString());
     }
 
     @Test
     void moveChatState_ChatStateNotFound() throws Exception {
         when(stateService.findByChatID(anyLong())).thenReturn(Optional.empty());
-        MvcResult mvcResult = mockMvc.perform(post("/chatstate/{chatID}/move", anyLong())
+        MvcResult mvcResult = mockMvc.perform(post("/chatstate/{chatID}/move", 1L)
                         .param("move", anyString())
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn();

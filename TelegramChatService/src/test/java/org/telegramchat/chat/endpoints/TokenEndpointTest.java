@@ -11,12 +11,11 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.telegramchat.chat.entity.TelegramBotAuthentication;
-import org.telegramchat.chat.service.AuthenticationService;
+import org.telegramchat.chat.repository.TelegramBotAuthenticationRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(TokenEndpoint.class)
@@ -26,13 +25,12 @@ public class TokenEndpointTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private AuthenticationService service;
-
+    private TelegramBotAuthenticationRepository authenticationRepository;
 
     @Test
-    void generateTokenTest() throws Exception {
+    public void generateTokenTest() throws Exception {
         TelegramBotAuthentication telegramBotAuthentication = spy(TelegramBotAuthentication.class);
-        when(service.create(any())).thenReturn(telegramBotAuthentication);
+        when(authenticationRepository.save(any())).thenReturn(telegramBotAuthentication);
         MvcResult mvcResult = mockMvc.perform(get("/token")
                         .accept(MediaType.APPLICATION_JSON))
                 .andReturn();

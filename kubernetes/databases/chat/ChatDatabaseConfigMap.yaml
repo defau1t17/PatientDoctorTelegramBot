@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chat-db-secret
+  namespace: application
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: "chatdatabase"
+  POSTGRES_USER: "chatuser"
+  POSTGRES_PASSWORD: "chatpassword"
+  

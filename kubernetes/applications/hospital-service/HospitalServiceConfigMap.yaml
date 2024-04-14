@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: application
+  name: hospital-service-configmap
+  labels:
+    app: hospital-service
+data:
+  HOSPITAL_DB_NAME: "hospitaldatabase"
+  HOSPITAL_DB_USERNAME: "hospitaluser"
+  HOSPITAL_DB_PASSWORD: "hospitalpassword"
+  HOSPITAL_DB_CONTAINER_NAME: "hospital-database-service"
+  HOSPITAL_DB_PORT: "5432"
+  REDIS_HOST_NAME: "redis-database-service"
+  

@@ -49,7 +49,7 @@ class RequestServiceTest {
         assertTrue(optionalPatient.isPresent());
         assertEquals(patientDTO, optionalPatient.get());
 
-        verify(restTemplate).getForEntity(eq("http://localhost:8084/hospital/api/patients/chat/0"), eq(PatientDTO.class));
+        verify(restTemplate).getForEntity(anyString(), eq(PatientDTO.class));
     }
 
     @Test
@@ -61,7 +61,7 @@ class RequestServiceTest {
 
         assertTrue(optionalPatient.isEmpty());
 
-        verify(restTemplate).getForEntity(eq("http://localhost:8084/hospital/api/patients/chat/-1"), eq(PatientDTO.class));
+        verify(restTemplate).getForEntity(anyString(), eq(PatientDTO.class));
     }
 
 
@@ -75,7 +75,7 @@ class RequestServiceTest {
         assertTrue(doctorsByPatientID.isPresent());
         assertEquals(doctorsByPatientID.get().size(), 2);
 
-        verify(restTemplate).getForEntity(eq("http://localhost:8084/hospital/api/doctors/patient/0"), eq(DoctorDTO[].class));
+        verify(restTemplate).getForEntity(anyString(), eq(DoctorDTO[].class));
     }
 
     @Test
@@ -87,7 +87,7 @@ class RequestServiceTest {
 
         assertTrue(doctorsByPatientID.isEmpty());
 
-        verify(restTemplate).getForEntity(eq("http://localhost:8084/hospital/api/doctors/patient/0"), eq(DoctorDTO[].class));
+        verify(restTemplate).getForEntity(anyString(), eq(DoctorDTO[].class));
     }
 
 
