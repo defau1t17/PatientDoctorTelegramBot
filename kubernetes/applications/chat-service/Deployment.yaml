@@ -24,5 +24,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: chat-service-configmap
+          imagePullPolicy: Always
       restartPolicy: Always
 

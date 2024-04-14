@@ -24,6 +24,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: emergency-service-configmap
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
       restartPolicy: Always
       

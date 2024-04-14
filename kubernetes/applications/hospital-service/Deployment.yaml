@@ -21,7 +21,7 @@ spec:
           image: ghcr.io/defau1t17/hospitalservice:latest
           ports:
             - containerPort: 8084
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: hospital-service-configmap

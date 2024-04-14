@@ -24,6 +24,6 @@ spec:
           envFrom:
             - configMapRef:
                 name: patient-telegram-bot-config-map
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
       restartPolicy: Always
       

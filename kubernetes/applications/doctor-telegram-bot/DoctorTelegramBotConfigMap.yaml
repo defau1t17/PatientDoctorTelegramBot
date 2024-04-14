@@ -11,4 +11,5 @@ data:
   RABBITMQ_USER: "guest"
   RABBITMQ_HOST: "rabbitmq-service"
   RABBITMQ_PORT: "5672"
-  
+  CHAT_SERVICE_ADDRESS: "chatservice"
+  HOSPITAL_SERVICE_ADDRESS: "hospitalservice"

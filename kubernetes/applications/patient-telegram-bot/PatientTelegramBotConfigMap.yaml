@@ -7,4 +7,7 @@ metadata:
     app: patient-bot
 data:
   PATIENT_TOKEN: "token"
+  HOSPITAL_SERVICE_ADDRESS: "hospitalservice"
+  CHAT_SERVICE_ADDRESS: "chatservice"
+  EMERGENCY_SERVICE_ADDRESS: "emergencyservice"
   
