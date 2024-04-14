@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emergency-service-deployment
+  namespace: application
+  labels:
+    app: emergency-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emergency-service
+  template:
+    metadata:
+      name: emergency-service
+      labels:
+        app: emergency-service
+    spec:
+      containers:
+        - name: emergency-service
+          image: ghcr.io/defau1t17/emergencyservice:latest
+          ports:
+            - containerPort: 8086
+          envFrom:
+            - configMapRef:
+                name: emergency-service-configmap
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      
