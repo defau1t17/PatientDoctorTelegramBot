@@ -1,0 +1,17 @@
+apiVersion: v1
+entries:
+  chat-service:
+  - apiVersion: v2
+    appVersion: 0.0.2
+    created: "2024-04-15T21:29:42.576992807+03:00"
+    dependencies:
+    - name: chat-database
+      repository: ""
+      version: 1.0.0
+    digest: 657b994aa621390a237e05c158f17d88d97cdda2e2b5f95652eb255bcc925f34
+    name: chat-service
+    type: application
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-service-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-04-15T21:29:42.575878548+03:00"
