@@ -12,6 +12,6 @@ entries:
     name: chat-service
     type: application
     urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-service-1.0.0.tgz
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/chatservice-1.0.0.tgz
     version: 1.0.0
 generated: "2024-04-15T21:29:42.575878548+03:00"
