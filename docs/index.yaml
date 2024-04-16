@@ -45,10 +45,9 @@ entries:
     version: 1.0.0
   chat-service:
   - apiVersion: v2
-    created: "2024-04-16T22:06:00.534201907+03:00"
-    digest: 6c7eff99c2ddf9fabc97cc13cd27eb10edaa960e248d2bb1488d2c39701bc8df
+    created: "2024-04-16T22:21:03.768165955+03:00"
+    digest: 5bbe74103b38808a55a7f6f46093f854a2adc60955fe65de677bbb652fba1cb9
     name: chat-service
-    type: application
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-service-1.0.0.tgz
     version: 1.0.0
@@ -87,6 +86,6 @@ entries:
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/patient-telegram-bot-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-16T22:21:03.767473087+03:00"
+  generated: "2024-04-16T22:21:03.767473087+03:00"
 
 
