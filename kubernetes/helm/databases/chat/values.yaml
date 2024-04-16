@@ -1,0 +1,9 @@
+database:
+  name: chatdatabase
+  username: chatuser
+  password: chatpassword
+
+service:
+  name: chat-database-service
+  port: 5432
+  container_name: chat-db

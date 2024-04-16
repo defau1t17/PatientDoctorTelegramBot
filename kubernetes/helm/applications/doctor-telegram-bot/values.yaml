@@ -1,0 +1,15 @@
+doctorbot:
+  token: token
+  service_name: doctor-telegram-bot-service
+  container_name: doctor-bot
+  port: 8088
+
+rabbitmq:
+  username: guest
+  password: guest
+  port: 5672
+  service: rabbitmq-service
+
+services:
+  chat: chatservice
+  hospital: hospitalservice

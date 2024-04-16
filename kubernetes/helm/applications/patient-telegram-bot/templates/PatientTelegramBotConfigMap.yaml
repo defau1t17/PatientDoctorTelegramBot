@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: patient-telegram-bot-config-map
+  namespace: application
+  labels:
+    app: patient-bot
+data:
+  PATIENT_TOKEN: '{{.Values.telegrambot.token }}'
+  HOSPITAL_SERVICE_ADDRESS: '{{.Values.services.hospital }}'
+  CHAT_SERVICE_ADDRESS: '{{.Values.services.chat}}'
+  EMERGENCY_SERVICE_ADDRESS: '{{.Values.services.emergency}}'
+  

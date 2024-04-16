@@ -1,0 +1,4 @@
+jenkins:
+  port: 8080
+  container_name: jenkins-server
+  service_name: jenkins-service

@@ -1,0 +1,4 @@
+apiVersion: v2
+name: doctor-telegram-bot
+version: 1.0.0
+description: Doctor Telegram Bot

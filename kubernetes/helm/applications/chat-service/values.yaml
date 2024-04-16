@@ -1,0 +1,14 @@
+global:
+  database_name: chatdatabase
+  database_user: chatuser
+  database_password: chatpassword
+  database_service_name: chat-database-service
+  database_port: 5432
+  database_container_name: chat-database-service
+  database_image_version: latest
+
+service:
+  chat_service_port: 8082
+  chat_service_container_name: chat-service
+  chat_service_image_version: latest
+  service_name: chatservice

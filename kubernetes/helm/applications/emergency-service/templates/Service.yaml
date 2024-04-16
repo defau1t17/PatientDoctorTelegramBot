@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: application
+  name: '{{ .Values.emergency.service_name }}'
+spec:
+  selector:
+    app: emergency-service
+  ports:
+    - port: {{ .Values.emergency.port }}
+  type: LoadBalancer
+  

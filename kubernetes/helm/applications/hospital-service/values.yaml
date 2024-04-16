@@ -1,0 +1,9 @@
+global:
+  hospital_database_name: hospitaldatabase
+  hospital_database_user: hospitaluser
+  hospital_database_password: hospitalpassword
+  hospital_database_port: 5432
+  hospital_service_port: 8084
+  hospital_service_container_name: hospital-service
+  hospital_service_name: hospital-service
+  hospital_database_service_name: hospital-database-service

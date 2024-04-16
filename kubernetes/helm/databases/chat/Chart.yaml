@@ -1,0 +1,4 @@
+apiVersion: v2
+name: chat-database
+version: 1.0.0
+description: Database for Chat microservice
