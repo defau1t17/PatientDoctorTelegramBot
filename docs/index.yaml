@@ -26,5 +26,15 @@ entries:
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/hospital-database-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-16T20:01:04.036249232+03:00"
+  chat-database:
+  - apiVersion: v2
+    created: "2024-04-16T20:08:55.568188233+03:00"
+    description: Database for Chat microservice
+    digest: 198d81366939eb7c1f9583f8962c9539f42bf04d38fb576aac447e6ea1ee8117
+    name: chat-database
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-database-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-04-16T20:08:55.567955256+03:00"
+
 
