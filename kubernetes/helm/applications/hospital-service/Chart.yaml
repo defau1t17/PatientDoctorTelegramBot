@@ -1,0 +1,4 @@
+apiVersion: v2
+name: hospital-service
+version: 1.0.0
+description: Hospital Service

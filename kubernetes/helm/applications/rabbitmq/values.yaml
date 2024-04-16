@@ -1,0 +1,7 @@
+rabbit_config:
+  username: guest
+  password: guest
+  main_port: 5672
+  second_port: 15672
+  service_name: rabbitmq-service
+  container_name: rabbitmq

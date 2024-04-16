@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: rabbitmq
+spec:
+  destination:
+    name: ''
+    namespace: application
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: ''
+    repoURL: 'https://defau1t17.github.io/PatientDoctorTelegramBot/'
+    targetRevision: 1.0.0
+    chart: rabbitmq-service
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - Validate=false
+      - PruneLast=true
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chat-service-configmap
+  namespace: application
+  labels:
+    app: chatservice
+data:
+  CHAT_DATABASE_USERNAME: '{{ .Values.global.database_user}}'
+  CHAT_DATABASE_PASSWORD: '{{ .Values.global.database_password }}'
+  CHAT_DATABASE_NAME: '{{ .Values.global.database_name }}'
+  CHAT_DATABASE_PORT: '{{ .Values.global.database_port }}'
+  CHAT_DB_CONTAINER_NAME: '{{ .Values.global.database_container_name }}'
+  REDIS_HOST_NAME: "redis-database-service"

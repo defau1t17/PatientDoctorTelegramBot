@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: application
+  name: '{{.Values.global.hospital_service_name }}'
+spec:
+  selector:
+    app: hospital-service
+  ports:
+    - port: {{.Values.global.hospital_service_port }}
+  type: LoadBalancer
+
+  

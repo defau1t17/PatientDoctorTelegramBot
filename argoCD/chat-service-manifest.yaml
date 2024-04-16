@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: chat-service
+spec:
+  destination:
+    name: ''
+    namespace: application
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: ''
+    repoURL: 'https://defau1t17.github.io/PatientDoctorTelegramBot/'
+    targetRevision: 1.0.0
+    chart: chat-service
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - Validate=false
+      - CreateNamespace=true
+      - PruneLast=true
+      - ApplyOutOfSyncOnly=true
