@@ -1,26 +1,12 @@
 apiVersion: v1
 entries:
-  chat-service:
-  - apiVersion: v2
-    appVersion: 0.0.2
-    created: "2024-04-15T22:12:20.616446118+03:00"
-    dependencies:
-    - name: chat-database
-      repository: ""
-      version: 1.0.0
-    digest: 35ee6fc1a0428e2298b7ad22cdb771a010de34fb29ce802a69f8b63316b18e14
-    name: chat-service
-    type: application
-    urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-service-1.0.0.tgz
-    version: 1.0.0
   rabbitmq-service:
   - apiVersion: v2
-    created: "2024-04-16T19:38:06.659428745+03:00"
+    created: "2024-04-16T19:42:22.378367434+03:00"
     description: RabbitMQ service for telegram bot and microservice
     digest: e21c855ef4db0f97bd2924ef52481525e371905c26eacabc3530377b2240b341
     name: rabbitmq-service
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/rabbitmq-service-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-16T19:38:06.659129585+03:00"
+generated: "2024-04-16T19:42:22.378131812+03:00"
