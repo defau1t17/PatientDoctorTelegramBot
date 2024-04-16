@@ -26,14 +26,13 @@ entries:
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/hospital-database-1.0.0.tgz
     version: 1.0.0
-  chat-database:
+  chat-service:
   - apiVersion: v2
-    created: "2024-04-16T20:08:55.568188233+03:00"
-    description: Database for Chat microservice
-    digest: 198d81366939eb7c1f9583f8962c9539f42bf04d38fb576aac447e6ea1ee8117
-    name: chat-database
+    created: "2024-04-16T22:21:03.768165955+03:00"
+    digest: 5bbe74103b38808a55a7f6f46093f854a2adc60955fe65de677bbb652fba1cb9
+    name: chat-service
     urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-database-1.0.0.tgz
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-service-1.0.0.tgz
     version: 1.0.0
   jenkins-server:
   - apiVersion: v2
@@ -88,5 +87,6 @@ entries:
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/patient-telegram-bot-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-16T21:21:04.429070855+03:00"
+generated: "2024-04-16T22:21:03.767473087+03:00"
+
 
