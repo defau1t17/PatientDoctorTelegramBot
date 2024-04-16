@@ -14,4 +14,13 @@ entries:
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-service-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-15T22:12:20.615843849+03:00"
+  rabbitmq-service:
+  - apiVersion: v2
+    created: "2024-04-16T19:38:06.659428745+03:00"
+    description: RabbitMQ service for telegram bot and microservice
+    digest: e21c855ef4db0f97bd2924ef52481525e371905c26eacabc3530377b2240b341
+    name: rabbitmq-service
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/rabbitmq-service-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-04-16T19:38:06.659129585+03:00"
