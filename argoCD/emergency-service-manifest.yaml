@@ -8,9 +8,10 @@ spec:
     namespace: application
     server: 'https://kubernetes.default.svc'
   source:
-    path: kubernetes/applications/emergency-service
-    repoURL: 'https://github.com/defau1t17/PatientDoctorTelegramBot'
-    targetRevision: master
+    path: ''
+    repoURL: 'https://defau1t17.github.io/PatientDoctorTelegramBot/'
+    targetRevision: 1.0.0
+    chart: emergency-service
   sources: []
   project: default
   syncPolicy:

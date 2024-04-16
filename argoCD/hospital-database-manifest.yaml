@@ -8,9 +8,10 @@ spec:
     namespace: application
     server: 'https://kubernetes.default.svc'
   source:
-    path: kubernetes/databases/hospital
-    repoURL: 'https://github.com/defau1t17/PatientDoctorTelegramBot'
-    targetRevision: master
+    path: ''
+    repoURL: 'https://defau1t17.github.io/PatientDoctorTelegramBot/'
+    targetRevision: 1.0.0
+    chart: hospital-database
   sources: []
   project: default
   syncPolicy:

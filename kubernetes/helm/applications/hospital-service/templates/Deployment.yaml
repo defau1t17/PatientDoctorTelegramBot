@@ -17,10 +17,10 @@ spec:
         app: hospital-service
     spec:
       containers:
-        - name: hospital-service
+        - name: '{{.Values.global.hospital_service_container_name}}'
           image: ghcr.io/defau1t17/hospitalservice:latest
           ports:
-            - containerPort: 8084
+            - containerPort: {{ .Values.global.hospital_service_port }}
           imagePullPolicy: Always
           envFrom:
             - configMapRef:

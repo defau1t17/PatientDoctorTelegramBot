@@ -1,0 +1,13 @@
+rabbitmq:
+  username: guest
+  password: guest
+  port: 5672
+  host: rabbitmq-service
+
+hospital:
+  hospital_service_name: hospitalservice
+
+emergency:
+  service_name: emergencyservice
+  port: 8086
+  container_name: emergency-service

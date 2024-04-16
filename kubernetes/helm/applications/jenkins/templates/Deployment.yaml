@@ -7,14 +7,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      jenkins: jenkins-container
+      jenkins: jenkins-server
   template:
     metadata:
       labels:
-        jenkins: jenkins-container
+        jenkins: jenkins-server
     spec:
       containers:
-      - name: jenkins
-        image: ghcr.io/defau1t17/jenkins-server:latest
-        ports:
-        - containerPort: 8080
+        - name: '{{.Values.jenkins.container_name}}'
+          image: ghcr.io/defau1t17/jenkins-server:latest
+          ports:
+            - containerPort: {{.Values.jenkins.port}}

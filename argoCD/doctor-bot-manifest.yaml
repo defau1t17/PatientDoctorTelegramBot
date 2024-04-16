@@ -1,16 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: doctor-telegram-bot
+  name: doctor-bot
 spec:
   destination:
     name: ''
     namespace: application
     server: 'https://kubernetes.default.svc'
   source:
-    path: kubernetes/applications/doctor-telegram-bot
-    repoURL: 'https://github.com/defau1t17/PatientDoctorTelegramBot'
-    targetRevision: master
+    path: ''
+    repoURL: 'https://defau1t17.github.io/PatientDoctorTelegramBot/'
+    targetRevision: 1.0.0
+    chart: doctor-telegram-bot
   sources: []
   project: default
   syncPolicy:

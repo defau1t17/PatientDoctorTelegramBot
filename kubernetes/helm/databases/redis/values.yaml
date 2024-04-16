@@ -1,0 +1,4 @@
+redis:
+  container_name: redis
+  container_port: 6379
+  service_name: redis-database-service

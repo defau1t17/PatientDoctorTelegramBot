@@ -1,0 +1,9 @@
+telegrambot:
+  token: token
+  container_name: patient-bot
+  port: 8081
+  service_name: patient-telegram-bot-service
+services:
+  hospital: hospitalservice
+  chat: chatservice
+  emergency: emergencyservice
