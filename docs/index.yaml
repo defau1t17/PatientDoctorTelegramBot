@@ -35,6 +35,15 @@ entries:
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-database-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-16T20:08:55.567955256+03:00"
+  patient-telegram-bot:
+  - apiVersion: v2
+    created: "2024-04-16T20:16:43.695963286+03:00"
+    digest: 67e869f92ccbf5dbfec910ca1ac6c8b5c61060ef245301f8c1fed0a69aaa4510
+    name: patient-telegram-bot
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/patient-telegram-bot-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-04-16T20:16:43.695717155+03:00"
+
 
 
