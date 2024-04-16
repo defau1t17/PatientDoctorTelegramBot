@@ -43,7 +43,20 @@ entries:
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/patient-telegram-bot-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-16T20:16:43.695717155+03:00"
+  doctor-telegram-bot:
+  - apiVersion: v2
+    created: "2024-04-16T20:26:39.017855415+03:00"
+    dependencies:
+    - name: rabbitmq-service
+      repository: https://defau1t17.github.io/PatientDoctorTelegramBot
+      version: 1.0.0
+    description: Doctor Telegram Bot
+    digest: 4cf9ec321764ec128ee23fd619ead46b4e9cbc6de04566638cf17b621cb91704
+    name: doctor-telegram-bot
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/doctor-telegram-bot-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-04-16T20:26:39.01752156+03:00"
 
 
 
