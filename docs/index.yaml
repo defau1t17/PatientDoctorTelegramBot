@@ -46,16 +46,8 @@ entries:
     version: 1.0.0
   chat-service:
   - apiVersion: v2
-    appVersion: 0.0.2
-    created: "2024-04-16T20:46:25.7500736+03:00"
-    dependencies:
-    - name: chat-database
-      repository: https://defau1t17.github.io/PatientDoctorTelegramBot
-      version: 1.0.0
-    - name: redis
-      repository: https://defau1t17.github.io/PatientDoctorTelegramBot
-      version: 1.0.0
-    digest: 7122f77a2ed29e81a8a3b6433169945a3713c48f9d528a304b995ab79b9c5895
+    created: "2024-04-16T21:20:29.943276815+03:00"
+    digest: e77eee522d6d734d463686af3c89f5a3f86022d921ebd2685bdb3597651823ce
     name: chat-service
     type: application
     urls:
@@ -63,56 +55,38 @@ entries:
     version: 1.0.0
   doctor-telegram-bot:
   - apiVersion: v2
-    created: "2024-04-16T20:46:10.354758013+03:00"
-    dependencies:
-    - name: rabbitmq-service
-      repository: https://defau1t17.github.io/PatientDoctorTelegramBot
-      version: 1.0.0
+    created: "2024-04-16T21:21:10.419655051+03:00"
     description: Doctor Telegram Bot
-    digest: 274e1f8ccd99058d6da587e307f19a4697ce029b1c57b1a159597ef8d986f014
+    digest: 3b83d93bfe1f288356121504c36a12b812f373cf49e6e09ba59de99c4757b8fa
     name: doctor-telegram-bot
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/doctor-telegram-bot-1.0.0.tgz
     version: 1.0.0
   emergency-service:
   - apiVersion: v2
-    created: "2024-04-16T20:45:53.44817493+03:00"
-    dependencies:
-    - name: rabbitmq-service
-      repository: https://defau1t17.github.io/PatientDoctorTelegramBot/
-      version: 1.0.0
+    created: "2024-04-16T21:20:52.633801404+03:00"
     description: Emergency Service
-    digest: 4429679ca94deebef8d757fcae12e17da6bcafe9cb39ba465d9a0bdda780618e
+    digest: 71751cab2d2fc920b4f9f785c868fa6df7ad81310ea787f723d556bd325335e9
     name: emergency-service
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/emergency-service-1.0.0.tgz
     version: 1.0.0
   hospital-service:
   - apiVersion: v2
-    created: "2024-04-16T20:46:16.503570079+03:00"
-    dependencies:
-    - name: hospital-database
-      repository: https://defau1t17.github.io/PatientDoctorTelegramBot
-      version: 1.0.0
-    - name: redis
-      repository: https://defau1t17.github.io/PatientDoctorTelegramBot
-      version: 1.0.0
+    created: "2024-04-16T21:20:43.560160208+03:00"
     description: Hospital Service
-    digest: c554c0dd23639e733f61949c3758e6a52f2d4f27b5ec43efe4a7a83d4a42864b
+    digest: e4b36c13154d879745ce32fc4633304c0710891dadc394d48eb30bb79ad707ac
     name: hospital-service
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/hospital-service-1.0.0.tgz
     version: 1.0.0
   patient-telegram-bot:
   - apiVersion: v2
-    created: "2024-04-16T20:46:03.259181503+03:00"
-    digest: e28de72bf102ec091818f8a16a4abd0b03e454c38260c17e994c475e55d71f80
+    created: "2024-04-16T21:21:04.429408577+03:00"
+    digest: cca0f15dad3ae4c634fb290b755429c188a5d3b5774d0806261430ce73e1f83b
     name: patient-telegram-bot
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/patient-telegram-bot-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-16T20:46:03.258963965+03:00"
-
-
-
+generated: "2024-04-16T21:21:04.429070855+03:00"
 
