@@ -9,4 +9,12 @@ entries:
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/rabbitmq-service-1.0.0.tgz
     version: 1.0.0
-generated: "2024-04-16T19:42:22.378131812+03:00"
+  redis:
+  - apiVersion: v2
+    created: "2024-04-16T19:52:30.179114781+03:00"
+    digest: 85ff4c41ffa45c9e912301388c9aeac7bcf2172a69eb863b89613c26cc18affc
+    name: redis
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/redis-1.0.0.tgz
+    version: 1.0.0
+generated: "2024-04-16T19:52:30.178852489+03:00"
