@@ -46,8 +46,8 @@ entries:
     version: 1.0.0
   chat-service:
   - apiVersion: v2
-    created: "2024-04-16T21:20:29.943276815+03:00"
-    digest: e77eee522d6d734d463686af3c89f5a3f86022d921ebd2685bdb3597651823ce
+    created: "2024-04-16T21:45:50.067340493+03:00"
+    digest: 9757a2c8eb3364d83ebbb031b642b0ab2d672dcf0085bd970119f436fbfeb5b7
     name: chat-service
     type: application
     urls:
