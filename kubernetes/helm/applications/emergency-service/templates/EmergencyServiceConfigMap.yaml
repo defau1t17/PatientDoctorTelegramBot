@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: application
+  name: emergency-service-configmap
+  labels:
+    app: emergency-service
+data:
+  RABBITMQ_DEFAULT_PASS: '{{ .Values.rabbitmq.password }}'
+  RABBITMQ_DEFAULT_USER: '{{ .Values.rabbitmq.username }}'
+  RABBITMQ_HOST: '{{ .Values.rabbitmq.host }}'
+  RABBITMQ_PORT: '{{.Values.rabbitmq.port }}'
+  HOSPITAL_SERVICE_ADDRESS: '{{ .Values.hospital.hospital_service_name }}'
+
+
+  

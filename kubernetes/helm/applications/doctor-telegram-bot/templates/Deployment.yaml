@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doctor-telegram-bot-deployment
+  namespace: application
+  labels:
+    app: doctor-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doctor-bot
+  template:
+    metadata:
+      name: doctor-bot
+      labels:
+        app: doctor-bot
+    spec:
+      containers:
+        - name: '{{.Values.doctorbot.container_name }}'
+          image: ghcr.io/defau1t17/doctorbot:latest
+          ports:
+            - containerPort: {{ .Values.doctorbot.port }}
+          envFrom:
+            - configMapRef:
+                name: doctor-telegram-bot-config-map
+          imagePullPolicy: Always
+      restartPolicy: Always
+      

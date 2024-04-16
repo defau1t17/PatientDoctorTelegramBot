@@ -1,0 +1,4 @@
+apiVersion: v2
+name: hospital-database
+version: 1.0.0
+description: Database for Hospital microservice

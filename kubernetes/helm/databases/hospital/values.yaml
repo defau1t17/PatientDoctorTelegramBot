@@ -1,0 +1,9 @@
+database:
+  name: hospitaldatabase
+  username: hospitaluser
+  password: hospitalpassword
+
+service:
+  name: hospital-database-service
+  port: 5432
+  container_name: hospital-db

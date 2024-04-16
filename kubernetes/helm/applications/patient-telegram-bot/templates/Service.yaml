@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: application
+  name: '{{.Values.telegrambot.service_name }}'
+spec:
+  selector:
+    app: patient-bot
+  ports:
+    - port: {{.Values.telegrambot.port }}
+  type: ClusterIP
+  

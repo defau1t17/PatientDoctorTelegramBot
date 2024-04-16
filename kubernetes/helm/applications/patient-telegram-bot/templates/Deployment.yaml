@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient-telegram-bot-deployment
+  namespace: application
+  labels:
+    app: patient-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: patient-bot
+  template:
+    metadata:
+      name: patient-bot
+      labels:
+        app: patient-bot
+    spec:
+      containers:
+        - name: '{{ .Values.telegrambot.container_name }}'
+          image: ghcr.io/defau1t17/patientbot:latest
+          ports:
+            - containerPort: {{.Values.telegrambot.port }}
+          envFrom:
+            - configMapRef:
+                name: patient-telegram-bot-config-map
+          imagePullPolicy: Always
+      restartPolicy: Always
+      

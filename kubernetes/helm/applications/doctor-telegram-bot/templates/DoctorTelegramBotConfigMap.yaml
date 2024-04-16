@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: doctor-telegram-bot-config-map
+  namespace: application
+  labels:
+    app: doctor-bot
+data:
+  DOCTOR_TOKEN: '{{.Values.doctorbot.token }}'
+  RABBITMQ_PASS: '{{.Values.rabbitmq.password }}'
+  RABBITMQ_USER: '{{.Values.rabbitmq.username }}'
+  RABBITMQ_HOST: '{{.Values.rabbitmq.service}}'
+  RABBITMQ_PORT: '{{.Values.rabbitmq.port}}'
+  CHAT_SERVICE_ADDRESS: '{{.Values.services.chat }}'
+  HOSPITAL_SERVICE_ADDRESS: '{{.Values.services.hospital}}'
