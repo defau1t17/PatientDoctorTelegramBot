@@ -1,16 +1,16 @@
 FROM maven:3-openjdk-17-slim AS BUILD
 
-WORKDIR /patientBot
-COPY PatientTelegramBot/ .
+WORKDIR /doctorbot
+COPY ../DoctorTelegramBot .
 
 RUN mvn clean  package
 
 #-------------------------------
 FROM openjdk:17 AS DEPLOY
 
-ENV serviceName="patientbot.jar"
+ENV serviceName="doctorbot.jar"
 WORKDIR /deployment
-COPY --from=BUILD /patientBot/target/PatientTelegramBot-SNAPSHOT.jar $serviceName
-EXPOSE 8081
+COPY --from=BUILD /doctorbot/target/DoctorTelegramBot-SNAPSHOT.jar $serviceName
+EXPOSE 8088
 
 ENTRYPOINT java -jar $serviceName

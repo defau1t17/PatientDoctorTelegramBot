@@ -3,7 +3,7 @@ import java.util.logging.Logger
 def logger = Logger.getLogger("")
 def installed = false
 def initialized = false
-def pluginParameter = "git github-plugin docker docker-workflow-plugin docker-workflow docker-commons pipeline-groovy-lib workflow-basic-steps workflow-cps workflow-multibranch pipeline-build-step pipeline-input-step pipeline-milestone-step pipeline-stage-step pipeline-model-definition "
+def pluginParameter = "git github-plugin docker-workflow docker-commons pipeline-groovy-lib workflow-basic-steps workflow-cps pipeline-build-step pipeline-input-step pipeline-milestone-step pipeline-stage-step pipeline-model-definition "
 def plugins = pluginParameter.split()
 logger.info("" + plugins)
 def instance = Jenkins.getInstance()
