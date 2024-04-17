@@ -1,8 +1,78 @@
 apiVersion: v1
 entries:
+  chat-database:
+  - apiVersion: v2
+    created: "2024-04-17T07:34:07.53430511Z"
+    description: Database for Chat microservice
+    digest: 198d81366939eb7c1f9583f8962c9539f42bf04d38fb576aac447e6ea1ee8117
+    name: chat-database
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-database-1.0.0.tgz
+    version: 1.0.0
+  chat-service:
+  - apiVersion: v2
+    created: "2024-04-17T07:34:07.534573014Z"
+    digest: e214cd0747f4afc015bc00028a2121265781b161c78be7f807a8622c5da69593
+    name: chat-service
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-service-1.0.0.tgz
+    version: 1.0.0
+  doctor-telegram-bot:
+  - apiVersion: v2
+    created: "2024-04-17T07:34:07.534818134Z"
+    description: Doctor Telegram Bot
+    digest: cefcbefed764e93f23fc9b2533a1aed7d53bdac70ecbf7d03da33187efa549dd
+    name: doctor-telegram-bot
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/doctor-telegram-bot-1.0.0.tgz
+    version: 1.0.0
+  emergency-service:
+  - apiVersion: v2
+    created: "2024-04-17T07:34:07.535069096Z"
+    description: Emergency Service
+    digest: 4c7a4f165711a945a97caea7e8804878f9cd3587bc03ce59d9ab3973a40cbc64
+    name: emergency-service
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/emergency-service-1.0.0.tgz
+    version: 1.0.0
+  hospital-database:
+  - apiVersion: v2
+    created: "2024-04-17T07:34:07.535337119Z"
+    description: Database for Hospital microservice
+    digest: 9b95c90fd96bf6293694142f71dcba14a0542884276caab4f1bcdeed9425f191
+    name: hospital-database
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/hospital-database-1.0.0.tgz
+    version: 1.0.0
+  hospital-service:
+  - apiVersion: v2
+    created: "2024-04-17T07:34:07.535549919Z"
+    description: Hospital Service
+    digest: e4b36c13154d879745ce32fc4633304c0710891dadc394d48eb30bb79ad707ac
+    name: hospital-service
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/hospital-service-1.0.0.tgz
+    version: 1.0.0
+  jenkins-server:
+  - apiVersion: v2
+    created: "2024-04-17T07:34:07.535733725Z"
+    description: Jenkins server for CI
+    digest: 6d3585235c7b2c00b53b1ec6bba3f71b56b42b0f4ac2c523f4b42874b86ac06c
+    name: jenkins-server
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/jenkins-server-1.0.0.tgz
+    version: 1.0.0
+  patient-telegram-bot:
+  - apiVersion: v2
+    created: "2024-04-17T07:34:07.535934983Z"
+    digest: cca0f15dad3ae4c634fb290b755429c188a5d3b5774d0806261430ce73e1f83b
+    name: patient-telegram-bot
+    urls:
+    - https://defau1t17.github.io/PatientDoctorTelegramBot/patient-telegram-bot-1.0.0.tgz
+    version: 1.0.0
   rabbitmq-service:
   - apiVersion: v2
-    created: "2024-04-16T19:42:22.378367434+03:00"
+    created: "2024-04-17T07:34:07.536154966Z"
     description: RabbitMQ service for telegram bot and microservice
     digest: e21c855ef4db0f97bd2924ef52481525e371905c26eacabc3530377b2240b341
     name: rabbitmq-service
@@ -11,81 +81,10 @@ entries:
     version: 1.0.0
   redis:
   - apiVersion: v2
-    created: "2024-04-16T19:52:30.179114781+03:00"
+    created: "2024-04-17T07:34:07.536317932Z"
     digest: 85ff4c41ffa45c9e912301388c9aeac7bcf2172a69eb863b89613c26cc18affc
     name: redis
     urls:
     - https://defau1t17.github.io/PatientDoctorTelegramBot/redis-1.0.0.tgz
     version: 1.0.0
-  hospital-database:
-  - apiVersion: v2
-    created: "2024-04-16T20:01:04.03672842+03:00"
-    description: Database for Hospital microservice
-    digest: 9b95c90fd96bf6293694142f71dcba14a0542884276caab4f1bcdeed9425f191
-    name: hospital-database
-    urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/hospital-database-1.0.0.tgz
-    version: 1.0.0
-  chat-service:
-  - apiVersion: v2
-    created: "2024-04-16T22:21:03.768165955+03:00"
-    digest: 5bbe74103b38808a55a7f6f46093f854a2adc60955fe65de677bbb652fba1cb9
-    name: chat-service
-    urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-service-1.0.0.tgz
-    version: 1.0.0
-  jenkins-server:
-  - apiVersion: v2
-    created: "2024-04-16T20:40:05.721292041+03:00"
-    description: Jenkins server for CI
-    digest: 1aa0a8aee85ea344241a1b55c491cc2e052a60671eb2d48ac8e5a023b311156f
-    name: jenkins-server
-    urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/jenkins-server-1.0.0.tgz
-    version: 1.0.0
-  chat-service:
-  - apiVersion: v2
-    created: "2024-04-16T22:21:03.768165955+03:00"
-    digest: 5bbe74103b38808a55a7f6f46093f854a2adc60955fe65de677bbb652fba1cb9
-    name: chat-service
-    urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/chat-service-1.0.0.tgz
-    version: 1.0.0
-  doctor-telegram-bot:
-  - apiVersion: v2
-    created: "2024-04-16T21:21:10.419655051+03:00"
-    description: Doctor Telegram Bot
-    digest: 3b83d93bfe1f288356121504c36a12b812f373cf49e6e09ba59de99c4757b8fa
-    name: doctor-telegram-bot
-    urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/doctor-telegram-bot-1.0.0.tgz
-    version: 1.0.0
-  emergency-service:
-  - apiVersion: v2
-    created: "2024-04-16T21:20:52.633801404+03:00"
-    description: Emergency Service
-    digest: 71751cab2d2fc920b4f9f785c868fa6df7ad81310ea787f723d556bd325335e9
-    name: emergency-service
-    urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/emergency-service-1.0.0.tgz
-    version: 1.0.0
-  hospital-service:
-  - apiVersion: v2
-    created: "2024-04-16T21:20:43.560160208+03:00"
-    description: Hospital Service
-    digest: e4b36c13154d879745ce32fc4633304c0710891dadc394d48eb30bb79ad707ac
-    name: hospital-service
-    urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/hospital-service-1.0.0.tgz
-    version: 1.0.0
-  patient-telegram-bot:
-  - apiVersion: v2
-    created: "2024-04-16T21:21:04.429408577+03:00"
-    digest: cca0f15dad3ae4c634fb290b755429c188a5d3b5774d0806261430ce73e1f83b
-    name: patient-telegram-bot
-    urls:
-    - https://defau1t17.github.io/PatientDoctorTelegramBot/patient-telegram-bot-1.0.0.tgz
-    version: 1.0.0
-  generated: "2024-04-16T22:21:03.767473087+03:00"
-
-
+generated: "2024-04-17T07:34:07.53384197Z"
