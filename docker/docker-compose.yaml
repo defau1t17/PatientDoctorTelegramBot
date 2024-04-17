@@ -51,7 +51,7 @@ services:
     container_name: chatservice
     image: chatservice:latest
     build:
-      dockerfile: Dockerfile.chatservice
+      dockerfile: docker/Dockerfile.chatservice
       context: .
     ports:
       - "${CHAT_SERVICE_HOST_PORT}:${CHAT_SERVICE_CONTAINER_PORT}"
@@ -73,7 +73,7 @@ services:
     container_name: emergencyservice
     image: emergencyservice:latest
     build:
-      dockerfile: Dockerfile.emergencyservice
+      dockerfile: docker/Dockerfile.emergencyservice
       context: .
     ports:
       - "${EMERGENCY_SERVICE_HOST_PORT}:${EMERGENCY_SERVICE_CONTAINER_PORT}"
@@ -93,7 +93,7 @@ services:
     container_name: hospitalservice
     image: hospitalservice:latest
     build:
-      dockerfile: Dockerfile.hospitalservice
+      dockerfile: docker/Dockerfile.hospitalservice
       context: .
     ports:
       - "${HOSPITAL_SERVICE_HOST_PORT}:${HOSPITAL_SERVICE_CONTAINER_PORT}"
@@ -116,7 +116,7 @@ services:
     container_name: "${PATIENT_TELEGRAM_BOT_CONTAINER_NAME}"
     image: patientbot:latest
     build:
-      dockerfile: Dockerfile.patientbot
+      dockerfile: docker/Dockerfile.patientbot
       context: .
     ports:
       - "${PATIENT_TELEGRAM_BOT_HOST_PORT}:${PATIENT_TELEGRAM_BOT_CONTAINER_PORT}"
@@ -132,7 +132,7 @@ services:
     container_name: "${DOCTOR_TELEGRAM_BOT_CONTAINER_NAME}"
     image: doctorbot:latest
     build:
-      dockerfile: Dockerfile.doctorbot
+      dockerfile: docker/Dockerfile.doctorbot
       context: .
     ports:
       - "${DOCTOR_TELEGRAM_BOT_HOST_PORT}:${DOCTOR_TELEGRAM_BOT_CONTAINER_PORT}"
@@ -152,7 +152,7 @@ services:
     container_name: jenkins-server
     build:
       context: .
-      dockerfile: Dockerfile.jenkins
+      dockerfile: docker/Dockerfile.jenkins
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
