@@ -37,7 +37,7 @@
       <submoduleCfg class="empty-list"/>
       <extensions/>
     </scm>
-    <scriptPath>TelegramChatService/Jenkinsfile</scriptPath>
+    <scriptPath>DoctorTelegramBot/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
