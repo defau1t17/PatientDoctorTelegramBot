@@ -2,8 +2,11 @@ pipeline {
     agent any
     environment {
         BUILD_VOLUME = "${env.JOB_NAME}-${env.BUILD_NUMBER}"
+        TOKEN = credentials('GIT_TOKEN')
+        USERNAME= credentials('GITHUB_USERNAME')
+        MAIL= credentials('GITHUB_MAIL')
     }
-    stages{
+    stages {
         stage("config variable") {
             steps {
                 script {
@@ -11,19 +14,41 @@ pipeline {
                 }
             }
         }
-        stage("test"){
-            steps{
-                withDockerContainer(args: "-v ${BUILD_VOLUME}:/var/jenkins_home/workspace/${env.JOB_NAME}" ,image: 'alpine') {
+        stage("github image") {
+            steps {
+                withDockerContainer(args: "-v ${BUILD_VOLUME}:/var/jenkins_home/workspace/${env.JOB_NAME} -v ${BUILD_VOLUME}:/var/jenkins_home/jobs/${env.JOB_NAME}/workspace/", image: 'alpine') {
                     sh 'apk update && apk add git docker'
-                    sh 'git clone -b develop https://github.com/defau1t17/PatientDoctorTelegramBot; cd PatientDoctorTelegramBot/; docker build -t emergencyservice:latest  --file Dockerfile.emergencyservice .'
+                    sh 'git clone -b develop https://github.com/defau1t17/PatientDoctorTelegramBot; cd PatientDoctorTelegramBot/; docker build -t emergencyservice:latest -t ghcr.io/defau1t17/emergencyservice:latest --file docker/Dockerfile.emergencyservice .'
                 }
-            }    
-            post{
-                always {
+            }
+            post {
+                always{
                     sh "docker volume rm ${BUILD_VOLUME}"
+                }
+                success {
+                    sh "echo ${TOKEN} | docker login ghcr.io -u defau1t17 --password-stdin"
+                    sh 'docker push ghcr.io/defau1t17/emergencyservice:latest'
+                }
+            }
+        }
+        stage("helm chart") {
+            steps {
+                withDockerContainer(args: "-v ${BUILD_VOLUME}:/var/jenkins_home/workspace/${env.JOB_NAME} -v ${BUILD_VOLUME}:/var/jenkins_home/jobs/${env.JOB_NAME}/workspace/", image: 'alpine') {
+                    sh 'apk update && apk add helm git ;'
+                    sh 'git clone -b master https://github.com/defau1t17/PatientDoctorTelegramBot;'
+                    sh 'cd PatientDoctorTelegramBot/kubernetes/helm/applications/emergency-service; helm lint; helm package . ; mv *.tgz ../../../../docs/;'
+                    sh 'helm repo index PatientDoctorTelegramBot/docs --url https://defau1t17.github.io/PatientDoctorTelegramBot/ ;'
+                    withCredentials([gitUsernamePassword(credentialsId: 'GIT_CREDS', gitToolName: 'Default')]) {
+                        sh 'git config --global user.email "${MAIL}" ; git config --global user.name "${USERNAME}" '
+                        sh "cd PatientDoctorTelegramBot/; git add .; git commit -m 'New version of emergency service helm chart'; git push origin master "
+                    }
                 }
             }
         }
     }
+    post {
+        always {
+            sh "docker volume rm ${BUILD_VOLUME}"
+        }
+    }
 }
-
