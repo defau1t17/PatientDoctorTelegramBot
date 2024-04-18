@@ -34,5 +34,4 @@
 12. [X] GitFlow compliance 
 
 
-### Designed variant:
-<img alt="designed image" src="PatientDoctorTelegramBot_v1.jpg" height="100%"/>
+
